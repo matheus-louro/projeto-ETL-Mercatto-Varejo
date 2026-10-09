@@ -106,11 +106,27 @@ No legado, **281.084.957,13 = 275.324.024,56 + 5.760.932,57**. No e-commerce, a 
 
 ## 5. Questão (d) — Anomalias e limites do diagnóstico
 
-[A desenvolver.]
+O diagnóstico das fontes completas permitiu quantificar anomalias locais estruturais e semânticas que afetam a qualidade dos dados antes da integração:
+
+* **Valores sentinela:** No legado, 1.025 dos 130.000 pedidos (0,79%) registram a data de entrega como `1900-01-01`. Esse artifício para contornar a ausência de data realiza um deslocamento nas médias cronológicas.
+* **Inconsistências cronológicas e financeiras:** Entregas registradas antes do próprio pedido ocorrem em 775 pedidos do legado (0,60%) e 1.683 do e-commerce (0,60%). Além disso, há valores de frete negativos em 362 pedidos do legado (0,28%) e 812 do e-commerce (0,29%). Estes representam defeitos sistêmicos ou cancelamentos compensatórios que exigem investigação.
+* **Referências órfãs:** A integridade referencial está quebrada em ambas as origens. Há 5.868 itens sem pedido correspondente no legado (1,48% de 397.086 itens) e 14.709 no e-commerce (1,48% de 995.367). 
+* **Qualidade e tipagem em arquivos:** O SAC (96.140 chamados) tem 2.830 notas de satisfação fora do domínio esperado (1 a 5) e 1.377 registros contêm quebras de linha internas, exigindo tratamento de conversão e formatação. No JSON (160.000 avaliações), 4.831 registros (3,02%) omitem o campo `rating`, e dentre os presentes, 16.108 (10,38%) são formatados como texto (`string`) em vez de inteiro.
+
+**Limites do diagnóstico e problemas revelados apenas na integração:**
+As anomalias supracitadas foram detectadas por consultas e perfilamentos locais independentes. No entanto, os defeitos semânticos mais graves dependem do resultado do cruzamento das bases e da aplicação de regras de negócio integradas.
+A divergência principal é a composição do valor dos pedidos: conforme provado na questão (c), o legado embute o frete no total, mas o e-commerce o isola. Um diagnóstico unifonte não detecta problemas nesses valores, pois eles são válidos localmente. Integrá-los sem uma regra de equiparação causaria viés analítico ao superestimar a receita de clientes antigos. Da mesma forma, o tratamento de identidades duplicadas e CPFs incorretos (presentes igualmente nas duas bases) dita a sobrevivência do registro. Se as regras de integração aglutinarem equivocadamente pessoas distintas, o modelo preditivo será treinado com históricos contaminados e hiperinflacionados.
 
 ## 6. Questão (e) — Grão das tabelas-fato
 
-[A desenvolver.]
+O modelo dimensional estabelece as seguintes unidades de análise para preservar a rastreabilidade e evitar o produto cartesiano ao agregar as métricas:
+
+* Uma linha de `dw.fato_pedido` representa um único pedido comercializado em qualquer um dos sistemas de origem.
+* Uma linha de `dw.fato_item_pedido` representa um produto unitário faturado dentro de um pedido específico.
+* Uma linha de `dw.fato_atendimento` representa um registro de atendimento (chamado) aberto no SAC.
+* Uma linha de `dw.fato_avaliacao` representa uma avaliação de produto enviada por um cliente ao marketplace.
+
+A chave primária local dos pedidos (`ID_PEDIDO` no legado e `order_id` no e-commerce) é insuficiente para garantir a unicidade no ambiente integrado. Os sistemas geradores operam de forma isolada e emitem sequências numéricas idênticas. Devido a essa colisão inevitável de identificadores, a origem compõe a identificação obrigatória no Data Warehouse (através da chave composta por `id_origem` e `sistema_origem`), assegurando que um pedido oriundo do legado e um do e-commerce com o mesmo número sejam corretamente apartados e reconhecidos como eventos distintos.
 
 ## Referências e reprodução
 
