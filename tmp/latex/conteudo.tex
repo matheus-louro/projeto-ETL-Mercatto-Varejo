@@ -1,0 +1,368 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\section{Relatório de Diagnóstico --- Mercatto
+Varejo}\label{relatuxf3rio-de-diagnuxf3stico-mercatto-varejo}
+
+\textbf{Mineração de Dados · IFMT · Entrega 1}\\
+\textbf{Equipe:} Matheus Henrique Moreira Louro e Lucas Ribeiro
+Luchesi\\
+\textbf{Ambiente:} Docker, escala 1,0, semente 20262
+
+\subsection{1. Objetivo e método}\label{objetivo-e-muxe9todo}
+
+Diagnosticar as fontes MySQL legado, PostgreSQL do e-commerce, CSV do
+SAC e NDJSON de avaliações antes da integração. As medições abrangem as
+bases completas, sem alteração das origens, e complementam o perfilador
+fornecido. O objetivo do projeto é prever a recompra entre 01/07/2025 e
+28/09/2025 usando o comportamento até 30/06/2025.
+
+\subsection{2. Questão (a) --- Chaves de junção e
+cobertura}\label{questuxe3o-a-chaves-de-junuxe7uxe3o-e-cobertura}
+
+\textbf{Cobertura = 100 × registros com correspondência / registros
+examinados.} Cada registro é contado uma vez, mesmo quando sua chave
+encontra várias ocorrências. Ausências e duplicatas integram o
+denominador; valores vazios não são pareados. CPF e telefone foram
+comparados somente por dígitos; e-mail, em minúsculas e sem espaços
+externos; nomes, sem acentos, em maiúsculas e com espaços uniformizados.
+
+\subsubsection{2.1. Clientes entre os
+sistemas}\label{clientes-entre-os-sistemas}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2667}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2667}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2667}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Candidato
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Valores distintos compartilhados
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Legado: cobertos / 47.250
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+E-commerce: cobertos / 85.000
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{CPF} ↔ \texttt{tax\_id} & 12.605 & 13.048 (27,61\%) & 12.606
+(14,83\%) \\
+\texttt{NOME} ↔ \texttt{full\_name} & 22.869 & 28.204 (59,69\%) & 31.360
+(36,89\%) \\
+\texttt{EMAIL} ↔ \texttt{email} & 0 & 0 (0,00\%) & 0 (0,00\%) \\
+\texttt{TELEFONE} ↔ \texttt{phone} & 0 & 0 (0,00\%) & 0 (0,00\%) \\
+\end{longtable}
+
+O \textbf{CPF é o principal candidato}, mas não garante identidade nem
+unicidade: 1.427 valores se repetem no legado e 3 no e-commerce; somente
+12.161 dos 12.605 CPFs compartilhados são únicos em ambos. Entre os
+compartilhados, 1.135 (9,00\%) têm dígito verificador inválido;
+excluí-los eliminaria correspondências observáveis. O nome apresenta
+maior cobertura, porém há 6.758 nomes repetidos no legado e 15.477 no
+e-commerce, exigindo critérios adicionais para evitar unir pessoas
+distintas. E-mail e telefone não ligam os cadastros nesta base. Os IDs
+internos dos dois sistemas também não comprovam identidade entre fontes.
+
+\subsubsection{2.2. Arquivos para pedidos, clientes e
+produtos}\label{arquivos-para-pedidos-clientes-e-produtos}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2727}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3636}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3636}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Candidato e destino
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Cobertos / examinados
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Cobertura
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+SAC: \texttt{(origem\_sistema,\ id\_pedido\_origem)} → pedido na origem
+indicada & 96.140 / 96.140 & 100,00\% \\
+SAC: \texttt{cpf\_cliente} → qualquer cadastro & 90.155 / 96.140 &
+93,77\% \\
+SAC: \texttt{cpf\_cliente} → cadastro da origem indicada & 88.535 /
+96.140 & 92,09\% \\
+JSON: \texttt{order.ref} → pedido da origem indicada & 160.000 / 160.000
+& 100,00\% \\
+JSON: \texttt{product.sku} → produto da origem indicada & 160.000 /
+160.000 & 100,00\% \\
+\end{longtable}
+
+A chave de pedido deve incluir a origem, pois IDs podem coincidir entre
+os bancos. No SAC, \texttt{LEGADO} e \texttt{ECOM} direcionam a busca a
+\texttt{ID\_PEDIDO} e \texttt{order\_id}. No JSON,
+\texttt{LEG-\textless{}id\textgreater{}} referencia IDs do legado,
+\texttt{ECOM-\textless{}id\textgreater{}} referencia pedidos do
+e-commerce e \texttt{SKU-\textless{}n\textgreater{}} corresponde a
+\texttt{shop.product.sku}. São 40.016 avaliações do legado e 119.984 do
+e-commerce, com cobertura de 100\% para pedidos e produtos em cada
+grupo.
+
+A ligação do SAC por pedido cobre todas as linhas, inclusive as 5.985
+(6,23\%) sem CPF em nenhum cadastro. Nas avaliações, a existência de
+pedido e produto foi verificada separadamente; não comprova que o
+produto pertence ao pedido. \texttt{protocolo} e \texttt{review\_id}
+identificam registros locais, sem contraparte direta nos bancos.
+
+\subsubsection{2.3. Relações internas dos
+bancos}\label{relauxe7uxf5es-internas-dos-bancos}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2727}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3636}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3636}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Relação e campo da chave
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Legado: cobertos / examinados
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+E-commerce: cobertos / examinados
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Pedido → cliente: \texttt{ID\_CLIENTE} / \texttt{customer\_id} & 130.000
+/ 130.000 (100\%) & 280.000 / 280.000 (100\%) \\
+Item → pedido: \texttt{ID\_PEDIDO} / \texttt{order\_id} & 391.218 /
+397.086 (98,52\%) & 980.658 / 995.367 (98,52\%) \\
+Item → produto: \texttt{ID\_PRODUTO} / \texttt{product\_id} & 397.086 /
+397.086 (100\%) & 995.367 / 995.367 (100\%) \\
+\end{longtable}
+
+Há 5.868 itens sem pedido no legado e 14.709 no e-commerce (1,48\% em
+cada origem). IDs de produto de sistemas diferentes não estabelecem
+equivalência comercial.
+
+\subsection{3. Questão (b) --- Heterogeneidade
+semântica}\label{questuxe3o-b-heterogeneidade-semuxe2ntica}
+
+Foram identificados três casos em que campos aparentemente equivalentes
+representam conceitos diferentes. Variações de idioma, grafia ou
+formato, isoladamente, não constituem divergência semântica.
+
+\subsubsection{3.1. Cancelamento e recusa de
+pagamento}\label{cancelamento-e-recusa-de-pagamento}
+
+Segundo o esqueleto de conformação fornecido, \texttt{CANCELADO} no
+legado agrega cancelamento pelo cliente e recusa de pagamento; o
+e-commerce distingue \texttt{canceled} de \texttt{payment\_declined}. As
+distribuições confirmam a diferença de abrangência:
+
+\begin{longtable}[]{@{}lrr@{}}
+\toprule\noalign{}
+Sistema e status & Pedidos / total da origem & Percentual \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Legado: \texttt{CANCELADO} & 15.774 / 130.000 & 12,13\% \\
+E-commerce: \texttt{canceled} & 22.413 / 280.000 & 8,00\% \\
+E-commerce: \texttt{payment\_declined} & 13.990 / 280.000 & 5,00\% \\
+\end{longtable}
+
+A soma dos dois estados no e-commerce é 36.403 pedidos (13,00\%).
+Comparar apenas \texttt{canceled} com \texttt{CANCELADO} excluiria as
+recusas da segunda fonte. Agrupar os estados permite comparação mais
+ampla, mas perde a distinção disponível no e-commerce. O motivo
+específico não pode ser recuperado no legado.
+
+\subsubsection{3.2. Composição do valor do
+pedido}\label{composiuxe7uxe3o-do-valor-do-pedido}
+
+\texttt{VALOR\_TOTAL} do legado inclui frete; \texttt{total\_amount} do
+e-commerce corresponde ao valor líquido dos itens. Essa diferença foi
+confirmada nos 130.000 pedidos do legado e nos 280.000 do e-commerce
+(100\% de cada origem), com resíduo máximo de R\$ 0,00 nas respectivas
+fórmulas. Comparar ou somar esses campos diretamente misturaria medidas
+distintas. A prova e os critérios de reconciliação estão na questão (c).
+
+\subsubsection{3.3. Abrangência das categorias de
+produto}\label{abranguxeancia-das-categorias-de-produto}
+
+O legado tem 27 rótulos distintos, considerando caixa e acentos, para
+3.000 produtos; o e-commerce tem 21 nós de categoria (8 raízes e 13
+filhos), para 12.000 produtos. ``Categoria'' pode representar um ramo,
+uma categoria específica ou uma combinação de ramos:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{informatica\ e\ games}: 112 produtos (3,73\% do legado),
+  reunindo dois ramos separados no e-commerce.
+\item
+  \texttt{TV\ E\ SOM}: 111 (3,70\%), reunindo \texttt{Televisores} e
+  \texttt{Áudio}, que classificam 793 e 805 produtos no e-commerce.
+\item
+  \texttt{DIVERSOS}, \texttt{OUTROS} e vazio: 340 (11,33\%), sem ramo
+  comercial identificável.
+\end{itemize}
+
+Padronizar grafias não resolve essas diferenças de significado. Atribuir
+uma categoria combinada a um único ramo descartaria parte da
+classificação; separá-la exige informação adicional por produto. Os 27
+rótulos, portanto, não equivalem a 27 categorias comerciais.
+
+\subsection{4. Questão (c) --- Reconciliação
+financeira}\label{questuxe3o-c-reconciliauxe7uxe3o-financeira}
+
+\textbf{Os campos não medem a mesma coisa:} \texttt{VALOR\_TOTAL} inclui
+frete, enquanto \texttt{total\_amount} o exclui. Para verificar, os
+itens foram agregados por ID de pedido antes da junção ao cabeçalho,
+evitando repetir totais e fretes. Foram examinados todos os pedidos,
+independentemente do status; itens órfãos não entram na soma de nenhum
+pedido existente.
+
+Para cada pedido \(p\), definiu-se o valor líquido dos itens:
+
+\[L_p = \sum_{i \in I_p} (q_i u_i - d_i^*)\]
+
+Em que \(I_p\) são os itens do pedido, \(q_i\) é a quantidade, \(u_i\) o
+preço unitário praticado e \(d_i^*\) o desconto da linha. Foram usados
+\texttt{QTD}, \texttt{VL\_UNITARIO} e \texttt{VL\_DESCONTO} no legado;
+\texttt{quantity}, \texttt{unit\_price} e \texttt{discount} no
+e-commerce.
+
+No legado, o sentinela \texttt{VL\_DESCONTO\ =\ -1} contribuiu como zero
+no teste. Essa hipótese é compatível com os totais registrados, mas não
+recupera o desconto real ausente. Há 4.056 itens com esse sentinela em
+4.003 pedidos (3,08\% dos 130.000); subtrair literalmente \texttt{-1}
+acrescentaria R\$ 1,00 por item e faria esses pedidos falharem na
+reconciliação. Os fretes foram usados com o sinal original, inclusive
+quando negativos.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2727}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3636}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3636}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Hipótese para o total registrado
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Legado: 130.000 pedidos
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+E-commerce: 280.000 pedidos
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(L_p + \text{frete}_p\) & 130.000 (100,00\%) & 94 (0,03\%) \\
+\(L_p\), sem frete & 33 (0,03\%) & 280.000 (100,00\%) \\
+\end{longtable}
+
+A tolerância foi R\$ 0,02 por pedido. Nas fórmulas confirmadas, o maior
+resíduo absoluto foi \textbf{R\$ 0,00}. As 33 e 94 coincidências com a
+hipótese alternativa decorrem de fretes cuja magnitude está dentro da
+tolerância. A reconciliação agregada também confirma o resultado:
+
+\begin{longtable}[]{@{}lrr@{}}
+\toprule\noalign{}
+Medida agregada (R\$) & Legado & E-commerce \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Soma dos totais registrados & 281.084.957,13 & 734.859.099,95 \\
+Soma dos itens líquidos & 275.324.024,56 & 734.859.099,95 \\
+Soma dos fretes & 5.760.932,57 & 10.991.760,38 \\
+\end{longtable}
+
+No legado, \textbf{281.084.957,13 = 275.324.024,56 + 5.760.932,57}. No
+e-commerce, a soma dos totais já é igual à soma dos itens líquidos;
+incluir frete exigiria acrescentar R\$ 10.991.760,38. Portanto, uma
+medida comparável de total com frete deve manter \texttt{VALOR\_TOTAL}
+no legado e adicionar \texttt{freight\_amount} a \texttt{total\_amount}
+no e-commerce, preservando a origem das medidas.
+
+\subsection{5. Questão (d) --- Anomalias e limites do
+diagnóstico}\label{questuxe3o-d-anomalias-e-limites-do-diagnuxf3stico}
+
+{[}A desenvolver.{]}
+
+\subsection{6. Questão (e) --- Grão das
+tabelas-fato}\label{questuxe3o-e-gruxe3o-das-tabelas-fato}
+
+{[}A desenvolver.{]}
+
+\subsection{Referências e
+reprodução}\label{referuxeancias-e-reproduuxe7uxe3o}
+
+Projeto Prático ETL Mercatto, seção 3.1; Dicionário de Dados e esqueleto
+de transformação do laboratório. Medições:
+\texttt{diagnostico\_chaves.py} e \texttt{diagnostico\_semantica.py}, na
+pasta \texttt{etl}; resultados em arquivos JSON homônimos, na pasta
+\texttt{saida}.
+
+\end{document}

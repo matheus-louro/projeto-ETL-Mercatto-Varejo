@@ -1,0 +1,3 @@
+# Complemento de ambiente: autenticação caching_sha2_password do MySQL 8.
+# Mantém o requirements.txt fornecido pelo professor sem alterações.
+cryptography==46.0.3

@@ -1,0 +1,132 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4 Portable) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(Relatorio_Diagnostico.tex
+LaTeX2e <2024-06-01> patch level 2
+L3 programming layer <2024-07-20>
+
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/base\article.
+cls
+Document Class: article 2024/02/08 v1.4n Standard LaTeX document class
+
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/base\size11.c
+lo))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/base\inputenc
+.sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/base\fontenc.
+sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/generic/babel\babel
+.sty
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/generic/babel\txtba
+bel.def)
+*************************************
+* Local config file bblopts.cfg used
+*
+
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/arabi\bblopts
+.cfg)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/babel-portuge
+s\brazil.ldf))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\lmodern.st
+y)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/base\textcomp
+.sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/geometry\geom
+etry.sty
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/graphics\keyv
+al.sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/generic/iftex\ifvte
+x.sty
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/generic/iftex\iftex
+.sty))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/geometry\geom
+etry.cfg))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsmath\amsma
+th.sty
+For additional information on amsmath, use the `?' option.
+
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsmath\amste
+xt.sty
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsmath\amsge
+n.sty))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsmath\amsbs
+y.sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsmath\amsop
+n.sty))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsfonts\amss
+ymb.sty
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsfonts\amsf
+onts.sty))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/tools\longtab
+le.sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/booktabs\book
+tabs.sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/tools\array.s
+ty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/tools\calc.st
+y)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/microtype\mic
+rotype.sty
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/etoolbox\etoo
+lbox.sty)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/microtype\mic
+rotype-pdftex.def)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/microtype\mic
+rotype.cfg))
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\t1lmr.fd)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/l3backend\l3b
+ackend-pdftex.def)
+(C:\Users\mhenr\Desktop\faculdade\mineração de dados\projeto ETL\tmp\latex\Re
+latorio_Diagnostico.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/microtype\mt-
+cmr.cfg)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\ts1lmr.fd)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\ot1lmr.fd)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\omllmm.fd)
+
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\omslmsy.fd
+)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\omxlmex.fd
+)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsfonts\umsa
+.fd)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/microtype\mt-
+msa.cfg)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/amsfonts\umsb
+.fd)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/microtype\mt-
+msb.cfg)
+(C:\Users\mhenr\scoop\apps\latex\current\texmfs\install\tex/latex/lm\t1lmtt.fd)
+
+[1{C:/Users/mhenr/scoop/apps/latex/current/texmfs/data/fonts/map/pdftex/pdftex.
+map}{C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/enc/dvips/lm/
+lm-ec.enc}{C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/enc/dvi
+ps/lm/lm-ts1.enc}{C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/
+enc/dvips/lm/lm-mathsy.enc}]
+[2]
+[3{C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/enc/dvips/lm/lm
+-mathit.enc}{C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/enc/d
+vips/lm/lm-rm.enc}{C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts
+/enc/dvips/lm/lm-mathex.enc}]
+[4]
+(C:\Users\mhenr\Desktop\faculdade\mineração de dados\projeto ETL\tmp\latex\Re
+latorio_Diagnostico.aux) )<C:/Users/mhenr/scoop/apps/latex/current/texmfs/insta
+ll/fonts/type1/public/lm/lmbx10.pfb><C:/Users/mhenr/scoop/apps/latex/current/te
+xmfs/install/fonts/type1/public/lm/lmbx12.pfb><C:/Users/mhenr/scoop/apps/latex/
+current/texmfs/install/fonts/type1/public/lm/lmex10.pfb><C:/Users/mhenr/scoop/a
+pps/latex/current/texmfs/install/fonts/type1/public/lm/lmmi10.pfb><C:/Users/mhe
+nr/scoop/apps/latex/current/texmfs/install/fonts/type1/public/lm/lmmi6.pfb><C:/
+Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/type1/public/lm/lmmi7
+.pfb><C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/type1/public
+/lm/lmmi8.pfb><C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/fonts/typ
+e1/public/lm/lmr10.pfb><C:/Users/mhenr/scoop/apps/latex/current/texmfs/install/
+fonts/type1/public/lm/lmsy10.pfb><C:/Users/mhenr/scoop/apps/latex/current/texmf
+s/install/fonts/type1/public/lm/lmsy8.pfb><C:/Users/mhenr/scoop/apps/latex/curr
+ent/texmfs/install/fonts/type1/public/lm/lmtt10.pfb>
+Output written on "C:\Users\mhenr\Desktop\faculdade\mineração de dados\projet
+o ETL\tmp\latex\Relatorio_Diagnostico.pdf" (4 pages, 179851 bytes).
+Transcript written on "C:\Users\mhenr\Desktop\faculdade\mineração de dados\pr
+ojeto ETL\tmp\latex\Relatorio_Diagnostico.log".

@@ -1,95 +1,117 @@
-# Relatório de Diagnóstico das Fontes — Mercatto Varejo
+# Relatório de Diagnóstico — Mercatto Varejo
 
-**Disciplina:** Mineração de Dados · IFMT  
-**Entrega:** Semana 1 — diagnóstico das quatro fontes  
-**Equipe:** [preencher]  
-**Data das medições:** 09/10/2026  
-**Ambiente:** laboratório Docker, escala 1,0, semente 20262
+**Mineração de Dados · IFMT · Entrega 1**  
+**Equipe:** Matheus Henrique Moreira Louro e Lucas Ribeiro Luchesi  
+**Ambiente:** Docker, escala 1,0, semente 20262
 
-## 1. Objetivo e procedimento
+## 1. Objetivo e método
 
-Este relatório descreve as fontes disponíveis para integrar o histórico de clientes da Mercatto: ERP legado em MySQL, e-commerce em PostgreSQL, atendimentos do SAC em CSV e avaliações do marketplace em NDJSON. O objetivo analítico do projeto é prever, usando o comportamento até 30/06/2025, se um cliente realizará nova compra entre 01/07/2025 e 28/09/2025.
+Diagnosticar as fontes MySQL legado, PostgreSQL do e-commerce, CSV do SAC e NDJSON de avaliações antes da integração. As medições abrangem as bases completas, sem alteração das origens, e complementam o perfilador fornecido. O objetivo do projeto é prever a recompra entre 01/07/2025 e 28/09/2025 usando o comportamento até 30/06/2025.
 
-As medições foram realizadas sobre as tabelas completas das origens e sobre todos os registros dos arquivos, sem alterar os dados. O diagnóstico foi iniciado com `00_perfilamento.py` e complementado pelo script `diagnostico_chaves.py`. As tabelas a seguir não estão sujeitas ao limite de 200.000 linhas empregado pelo perfilador original em algumas consultas.
+## 2. Questão (a) — Chaves de junção e cobertura
 
-## 2. Questão (a) — Candidatos a chave de junção e cobertura real
+**Cobertura = 100 × registros com correspondência / registros examinados.** Cada registro é contado uma vez, mesmo quando sua chave encontra várias ocorrências. Ausências e duplicatas integram o denominador; valores vazios não são pareados. CPF e telefone foram comparados somente por dígitos; e-mail, em minúsculas e sem espaços externos; nomes, sem acentos, em maiúsculas e com espaços uniformizados.
 
-**Critério de cobertura.** Um registro é considerado coberto quando sua chave encontra pelo menos uma ocorrência na fonte de destino. O percentual é `100 × registros cobertos ÷ registros examinados`. Cada linha da origem é contada uma única vez, independentemente de quantas correspondências existam no destino. Ausências e duplicatas permanecem na base de cálculo. Assim, cobertura mede a possibilidade de ligação; não comprova que dois registros representam a mesma pessoa.
+### 2.1. Clientes entre os sistemas
 
-Para comparar representações, CPF e telefone foram reduzidos a dígitos; e-mail foi convertido para minúsculas, com remoção de espaços nas extremidades; nomes foram comparados após remoção de acentos, conversão para maiúsculas e redução de espaços consecutivos. Valores vazios não foram pareados. São critérios de comparação para o diagnóstico, sem gravação de dados transformados.
-
-### 2.1. Identidade do cliente entre MySQL e PostgreSQL
-
-Foram examinados **47.250 registros de `CLIENTES`** e **85.000 de `shop.customer`**. Os identificadores internos `ID_CLIENTE` e `customer_id` pertencem a sistemas diferentes: a igualdade numérica entre eles não estabelece identidade. Os candidatos presentes nos dois cadastros e suas coberturas foram:
-
-| Candidato entre cadastros | Valores distintos em comum | Legado com correspondência / 47.250 | E-commerce com correspondência / 85.000 |
+| Candidato | Valores distintos compartilhados | Legado: cobertos / 47.250 | E-commerce: cobertos / 85.000 |
 |---|---:|---:|---:|
-| `CPF` ↔ `tax_id`, somente dígitos | 12.605 | 13.048 (27,61%) | 12.606 (14,83%) |
-| `EMAIL` ↔ `email`, normalizados | 0 | 0 (0,00%) | 0 (0,00%) |
-| `NOME` ↔ `full_name`, normalizados | 22.869 | 28.204 (59,69%) | 31.360 (36,89%) |
-| `TELEFONE` ↔ `phone`, somente dígitos | 0 | 0 (0,00%) | 0 (0,00%) |
+| `CPF` ↔ `tax_id` | 12.605 | 13.048 (27,61%) | 12.606 (14,83%) |
+| `NOME` ↔ `full_name` | 22.869 | 28.204 (59,69%) | 31.360 (36,89%) |
+| `EMAIL` ↔ `email` | 0 | 0 (0,00%) | 0 (0,00%) |
+| `TELEFONE` ↔ `phone` | 0 | 0 (0,00%) | 0 (0,00%) |
 
-O **CPF é o principal candidato à ligação entre os cadastros**. Está preenchido em 42.827 registros do legado (90,64%) e 78.145 do e-commerce (91,94%). Há 41.400 CPFs distintos não vazios no legado e 78.142 no e-commerce; a interseção de 12.605 corresponde a 30,45% e 16,13% desses conjuntos, respectivamente. Esses percentuais sobre valores distintos complementam a cobertura por registros da tabela e usam denominadores diferentes.
+O **CPF é o principal candidato**, mas não garante identidade nem unicidade: 1.427 valores se repetem no legado e 3 no e-commerce; somente 12.161 dos 12.605 CPFs compartilhados são únicos em ambos. Entre os compartilhados, 1.135 (9,00%) têm dígito verificador inválido; excluí-los eliminaria correspondências observáveis. O nome apresenta maior cobertura, porém há 6.758 nomes repetidos no legado e 15.477 no e-commerce, exigindo critérios adicionais para evitar unir pessoas distintas. E-mail e telefone não ligam os cadastros nesta base. Os IDs internos dos dois sistemas também não comprovam identidade entre fontes.
 
-A unicidade precisa ser investigada antes de uma junção: 1.427 valores de CPF se repetem no legado e 3 no e-commerce. Apenas 12.161 dos 12.605 CPFs compartilhados ocorrem uma única vez em cada cadastro. Uma junção direta por CPF produziria 13.049 pares, demonstrando que quantidade de pares não equivale a quantidade de clientes unificados. Entre os CPFs compartilhados, 1.135 (9,00%) têm dígito verificador inválido; excluí-los previamente eliminaria essas correspondências observáveis. O diagnóstico não permite afirmar que toda correspondência por CPF, válido ou inválido, identifica corretamente uma pessoa.
+### 2.2. Arquivos para pedidos, clientes e produtos
 
-O nome tem cobertura maior, mas apresenta colisões: 6.758 nomes normalizados se repetem no legado e 15.477 no e-commerce. Uma junção por nome produziria 39.505 pares. Por isso, o nome pode apoiar uma investigação de identidade, mas sua igualdade isolada não é suficiente para unificar clientes. E-mail e telefone, embora preenchidos em todos os registros, não apresentam interseção entre os sistemas nesta base.
-
-### 2.2. Ligação dos arquivos aos pedidos, clientes e produtos
-
-No SAC, a chave de pedido é composta por **`(origem_sistema, id_pedido_origem)`**: `LEGADO` direciona a busca para `PEDIDOS.ID_PEDIDO` e `ECOM` para `shop.orders.order_id`. No JSON, **`order.ref`** já incorpora essa distinção, com os prefixos `LEG-` e `ECOM-`. A origem deve acompanhar o identificador, pois os números de pedido podem coincidir entre os sistemas.
-
-| Candidato e destino | Registros cobertos / examinados | Cobertura |
+| Candidato e destino | Cobertos / examinados | Cobertura |
 |---|---:|---:|
 | SAC: `(origem_sistema, id_pedido_origem)` → pedido na origem indicada | 96.140 / 96.140 | 100,00% |
-| SAC: `cpf_cliente` → CPF em pelo menos um dos cadastros | 90.155 / 96.140 | 93,77% |
-| SAC: `cpf_cliente` → cadastro indicado por `origem_sistema` | 88.535 / 96.140 | 92,09% |
-| JSON: `order.ref = LEG-<id>` → `PEDIDOS.ID_PEDIDO` | 40.016 / 40.016 | 100,00% |
-| JSON: `order.ref = ECOM-<id>` → `shop.orders.order_id` | 119.984 / 119.984 | 100,00% |
-| JSON: `product.sku = LEG-<id>` → `PRODUTOS.ID_PRODUTO` | 40.016 / 40.016 | 100,00% |
-| JSON: `product.sku = SKU-<n>` → `shop.product.sku` | 119.984 / 119.984 | 100,00% |
+| SAC: `cpf_cliente` → qualquer cadastro | 90.155 / 96.140 | 93,77% |
+| SAC: `cpf_cliente` → cadastro da origem indicada | 88.535 / 96.140 | 92,09% |
+| JSON: `order.ref` → pedido da origem indicada | 160.000 / 160.000 | 100,00% |
+| JSON: `product.sku` → produto da origem indicada | 160.000 / 160.000 | 100,00% |
 
-O SAC contém 36.527 linhas com origem `LEGADO` e 59.613 com origem `ECOM`; todas encontram seu pedido. Pelo CPF no cadastro indicado pela origem, encontram correspondência 33.672 linhas do legado (92,18%) e 54.863 do e-commerce (92,03%). Considerando qualquer um dos dois cadastros, 5.985 linhas do SAC (6,23%) ficam sem correspondência por CPF. A ligação pelo pedido tem, portanto, maior cobertura observada. Os CPFs do SAC estão preenchidos em todas as linhas, mas preenchimento não garante presença no cadastro de destino.
+A chave de pedido deve incluir a origem, pois IDs podem coincidir entre os bancos. No SAC, `LEGADO` e `ECOM` direcionam a busca a `ID_PEDIDO` e `order_id`. No JSON, `LEG-<id>` referencia IDs do legado, `ECOM-<id>` referencia pedidos do e-commerce e `SKU-<n>` corresponde a `shop.product.sku`. São 40.016 avaliações do legado e 119.984 do e-commerce, com cobertura de 100% para pedidos e produtos em cada grupo.
 
-As 160.000 avaliações encontram um pedido por `order.ref` e um produto pela referência com prefixo. Essa medição verifica a existência das entidades separadamente; não demonstra que o produto avaliado consta entre os itens do pedido referenciado. `protocolo` e `review_id` identificam registros nas próprias fontes, mas não têm campo equivalente nos bancos para servir como ponte direta entre elas.
+A ligação do SAC por pedido cobre todas as linhas, inclusive as 5.985 (6,23%) sem CPF em nenhum cadastro. Nas avaliações, a existência de pedido e produto foi verificada separadamente; não comprova que o produto pertence ao pedido. `protocolo` e `review_id` identificam registros locais, sem contraparte direta nos bancos.
 
-### 2.3. Chaves relacionais dentro de cada banco
+### 2.3. Relações internas dos bancos
 
-As chaves locais também foram verificadas para sustentar a ligação dos pedidos aos clientes e dos itens aos pedidos e produtos:
-
-| Relação e campos | Registros cobertos / examinados | Cobertura |
+| Relação e campo da chave | Legado: cobertos / examinados | E-commerce: cobertos / examinados |
 |---|---:|---:|
-| Legado: `PEDIDOS.ID_CLIENTE` → `CLIENTES.ID_CLIENTE` | 130.000 / 130.000 | 100,00% |
-| E-commerce: `orders.customer_id` → `customer.customer_id` | 280.000 / 280.000 | 100,00% |
-| Legado: `ITENS_PEDIDO.ID_PEDIDO` → `PEDIDOS.ID_PEDIDO` | 391.218 / 397.086 | 98,52% |
-| E-commerce: `order_item.order_id` → `orders.order_id` | 980.658 / 995.367 | 98,52% |
-| Legado: `ITENS_PEDIDO.ID_PRODUTO` → `PRODUTOS.ID_PRODUTO` | 397.086 / 397.086 | 100,00% |
-| E-commerce: `order_item.product_id` → `product.product_id` | 995.367 / 995.367 | 100,00% |
+| Pedido → cliente: `ID_CLIENTE` / `customer_id` | 130.000 / 130.000 (100%) | 280.000 / 280.000 (100%) |
+| Item → pedido: `ID_PEDIDO` / `order_id` | 391.218 / 397.086 (98,52%) | 980.658 / 995.367 (98,52%) |
+| Item → produto: `ID_PRODUTO` / `product_id` | 397.086 / 397.086 (100%) | 995.367 / 995.367 (100%) |
 
-Há **5.868 itens sem pedido correspondente no legado** e **14.709 no e-commerce** (1,48% dos itens de cada sistema). As referências a produtos, por sua vez, encontram correspondência em todos os itens. Os IDs de produto são locais; sua igualdade numérica entre bancos não comprova equivalência comercial entre produtos.
+Há 5.868 itens sem pedido no legado e 14.709 no e-commerce (1,48% em cada origem). IDs de produto de sistemas diferentes não estabelecem equivalência comercial.
 
 ## 3. Questão (b) — Heterogeneidade semântica
 
-[A desenvolver: ao menos três casos com evidência numérica.]
+Foram identificados três casos em que campos aparentemente equivalentes representam conceitos diferentes. Variações de idioma, grafia ou formato, isoladamente, não constituem divergência semântica.
 
-## 4. Questão (c) — Reconciliação dos valores dos pedidos
+### 3.1. Cancelamento e recusa de pagamento
 
-[A desenvolver: comparar os totais com a soma dos itens, frete e desconto em cada origem.]
+Segundo o esqueleto de conformação fornecido, `CANCELADO` no legado agrega cancelamento pelo cliente e recusa de pagamento; o e-commerce distingue `canceled` de `payment_declined`. As distribuições confirmam a diferença de abrangência:
+
+| Sistema e status | Pedidos / total da origem | Percentual |
+|---|---:|---:|
+| Legado: `CANCELADO` | 15.774 / 130.000 | 12,13% |
+| E-commerce: `canceled` | 22.413 / 280.000 | 8,00% |
+| E-commerce: `payment_declined` | 13.990 / 280.000 | 5,00% |
+
+A soma dos dois estados no e-commerce é 36.403 pedidos (13,00%). Comparar apenas `canceled` com `CANCELADO` excluiria as recusas da segunda fonte. Agrupar os estados permite comparação mais ampla, mas perde a distinção disponível no e-commerce. O motivo específico não pode ser recuperado no legado.
+
+### 3.2. Composição do valor do pedido
+
+`VALOR_TOTAL` do legado inclui frete; `total_amount` do e-commerce corresponde ao valor líquido dos itens. Essa diferença foi confirmada nos 130.000 pedidos do legado e nos 280.000 do e-commerce (100% de cada origem), com resíduo máximo de R$ 0,00 nas respectivas fórmulas. Comparar ou somar esses campos diretamente misturaria medidas distintas. A prova e os critérios de reconciliação estão na questão (c).
+
+### 3.3. Abrangência das categorias de produto
+
+O legado tem 27 rótulos distintos, considerando caixa e acentos, para 3.000 produtos; o e-commerce tem 21 nós de categoria (8 raízes e 13 filhos), para 12.000 produtos. “Categoria” pode representar um ramo, uma categoria específica ou uma combinação de ramos:
+
+- `informatica e games`: 112 produtos (3,73% do legado), reunindo dois ramos separados no e-commerce.
+- `TV E SOM`: 111 (3,70%), reunindo `Televisores` e `Áudio`, que classificam 793 e 805 produtos no e-commerce.
+- `DIVERSOS`, `OUTROS` e vazio: 340 (11,33%), sem ramo comercial identificável.
+
+Padronizar grafias não resolve essas diferenças de significado. Atribuir uma categoria combinada a um único ramo descartaria parte da classificação; separá-la exige informação adicional por produto. Os 27 rótulos, portanto, não equivalem a 27 categorias comerciais.
+
+## 4. Questão (c) — Reconciliação financeira
+
+**Os campos não medem a mesma coisa:** `VALOR_TOTAL` inclui frete, enquanto `total_amount` o exclui. Para verificar, os itens foram agregados por ID de pedido antes da junção ao cabeçalho, evitando repetir totais e fretes. Foram examinados todos os pedidos, independentemente do status; itens órfãos não entram na soma de nenhum pedido existente.
+
+Para cada pedido $p$, definiu-se o valor líquido dos itens:
+
+$$L_p = \sum_{i \in I_p} (q_i u_i - d_i^*)$$
+
+Em que $I_p$ são os itens do pedido, $q_i$ é a quantidade, $u_i$ o preço unitário praticado e $d_i^*$ o desconto da linha. Foram usados `QTD`, `VL_UNITARIO` e `VL_DESCONTO` no legado; `quantity`, `unit_price` e `discount` no e-commerce.
+
+No legado, o sentinela `VL_DESCONTO = -1` contribuiu como zero no teste. Essa hipótese é compatível com os totais registrados, mas não recupera o desconto real ausente. Há 4.056 itens com esse sentinela em 4.003 pedidos (3,08% dos 130.000); subtrair literalmente `-1` acrescentaria R$ 1,00 por item e faria esses pedidos falharem na reconciliação. Os fretes foram usados com o sinal original, inclusive quando negativos.
+
+| Hipótese para o total registrado | Legado: 130.000 pedidos | E-commerce: 280.000 pedidos |
+|---|---:|---:|
+| $L_p + \text{frete}_p$ | 130.000 (100,00%) | 94 (0,03%) |
+| $L_p$, sem frete | 33 (0,03%) | 280.000 (100,00%) |
+
+A tolerância foi R$ 0,02 por pedido. Nas fórmulas confirmadas, o maior resíduo absoluto foi **R$ 0,00**. As 33 e 94 coincidências com a hipótese alternativa decorrem de fretes cuja magnitude está dentro da tolerância. A reconciliação agregada também confirma o resultado:
+
+| Medida agregada (R$) | Legado | E-commerce |
+|---|---:|---:|
+| Soma dos totais registrados | 281.084.957,13 | 734.859.099,95 |
+| Soma dos itens líquidos | 275.324.024,56 | 734.859.099,95 |
+| Soma dos fretes | 5.760.932,57 | 10.991.760,38 |
+
+No legado, **281.084.957,13 = 275.324.024,56 + 5.760.932,57**. No e-commerce, a soma dos totais já é igual à soma dos itens líquidos; incluir frete exigiria acrescentar R$ 10.991.760,38. Portanto, uma medida comparável de total com frete deve manter `VALOR_TOTAL` no legado e adicionar `freight_amount` a `total_amount` no e-commerce, preservando a origem das medidas.
 
 ## 5. Questão (d) — Anomalias e limites do diagnóstico
 
-[A desenvolver: quantificar anomalias e explicar quais dependem da integração.]
+[A desenvolver.]
 
-## 6. Questão (e) — Grão pretendido das tabelas-fato
+## 6. Questão (e) — Grão das tabelas-fato
 
-[A desenvolver: declarar a unidade representada por cada linha das tabelas-fato.]
+[A desenvolver.]
 
-## Referências e evidências locais
+## Referências e reprodução
 
-- Enunciado: `Projeto_Pratico_ETL_Mercatto.pdf`, seção 3.1 — Entrega 1.
-- Dicionário: `lab-etl-varejo/lab-etl-varejo/docs/DICIONARIO_DE_DADOS.md`.
-- Medição reproduzível: `lab-etl-varejo/lab-etl-varejo/etl/diagnostico_chaves.py`.
-- Resultados completos: `lab-etl-varejo/lab-etl-varejo/saida/diagnostico_chaves.json`.
-- Execução: na pasta do laboratório, `docker compose exec -T etl python diagnostico_chaves.py`.
-
-*Versão parcial: a questão (a) está respondida; os campos de identificação da equipe e as questões (b) a (e) serão completados antes da geração do PDF final, respeitando o limite de seis páginas.*
+Projeto Prático ETL Mercatto, seção 3.1; Dicionário de Dados e esqueleto de transformação do laboratório. Medições: `diagnostico_chaves.py` e `diagnostico_semantica.py`, na pasta `etl`; resultados em arquivos JSON homônimos, na pasta `saida`.
