@@ -7,6 +7,14 @@ analítico a construir e uma pergunta preditiva a responder no Orange.
 
 ---
 
+## Entrega da Semana 2
+
+As etapas de extração e conformação estão implementadas. Consulte
+[execução e conferência da Entrega 2](docs/SEMANA2_EXECUCAO.md) e o
+[RDT parcial](../Relatorio_Decisoes_RDT_Semana2.md).
+As cópias brutas permanecem em `stg`; resultados derivados e mapeamentos ficam
+em `cfm`. A imagem ETL instala a dependência complementar do MySQL no build.
+
 ## 1. Requisitos
 
 * Docker e Docker Compose (v2)
@@ -50,8 +58,11 @@ As duas fontes de arquivo ficam em `./dados/`:
 ├── etl/                      onde vocês trabalham
 │   ├── config.py             conexões e parâmetros analíticos (não alterar)
 │   ├── 00_perfilamento.py    PRONTO — modelo de perfilamento
-│   ├── 01_extracao.py        esqueleto
-│   ├── 02_transformacao.py   esqueleto
+│   ├── 01_extracao.py        extração completa com verificação de conteúdo
+│   ├── 02_transformacao.py   conformação da Semana 2
+│   ├── transformacoes_semana2.py  decisões e verificações da conformação
+│   ├── semana2_utils.py      funções compartilhadas das etapas
+│   ├── verificar_semana2.py  comparação integral após reexecução
 │   ├── 03_carga_dw.py        esqueleto
 │   ├── 04_abt.py             esqueleto (inclui o experimento de vazamento)
 │   ├── 05_exportar_orange.py PRONTO — exporta a ABT para o Orange
