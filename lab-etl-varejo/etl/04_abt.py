@@ -1,143 +1,129 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-ETAPA 4 — TABELA-BASE DE ANÁLISE (ABT) E O EXPERIMENTO DE VAZAMENTO
-
-Pergunta analítica:
-    dado o comportamento do cliente ATÉ 2025-06-30, ele comprará de novo
-    entre 2025-07-01 e 2025-09-28?
-
-Esta etapa produz DUAS versões da mesma tabela:
-
-    --correta     todos os atributos calculados apenas com dados até a data
-                  de corte. É a versão que vale.
-
-    --vazamento   a mesma coisa, só que com dois ou três atributos calculados
-                  sobre a base inteira. É a versão errada, que vocês vão
-                  construir de propósito, rodar no Orange e comparar.
-
-O objetivo do experimento não é ver um número maior. É medir a distância
-entre um resultado que parece excelente e um resultado que é válido —
-e descobrir que a diferença entre os dois cabe em uma linha de código.
-
-    docker compose exec etl python 04_abt.py --correta
-    docker compose exec etl python 04_abt.py --vazamento
-"""
-
+"""Construção transacional da ABT de recompra com corte temporal."""
 import argparse
-
-import pandas as pd
 from sqlalchemy import text
-
 from config import DATA_CORTE, DATA_FIM_ALVO, eng_dw
-from qualidade.assercoes import Suite
+from semana2_utils import escalar, verifica_sql, salva_json
+from semana3_utils import executar, verifica_fks
+
+# Frequência/recência/valores referem-se a pedidos registrados, inclusive cancelados.
+# Não usa status atual, entrega, cadastro atual ou votos nas variáveis preditoras.
+COLUNAS = {
+    'recencia_dias': 'INTEGER', 'frequencia_pedidos': 'INTEGER',
+    'valor_monetario_total': 'NUMERIC(20,2)', 'ticket_medio': 'NUMERIC(20,4)',
+    'tempo_como_cliente': 'INTEGER', 'qtd_atendimentos_sac': 'INTEGER',
+    'qtd_avaliacoes_consistentes': 'INTEGER', 'nota_media_avaliacoes': 'NUMERIC(10,4)',
+    'sem_nota_avaliacao': 'BOOLEAN',
+}
 
 
-# ---------------------------------------------------------------------------
-# ALVO — este está pronto, e é o único ponto do pipeline em que é legítimo
-# olhar para o futuro, porque é exatamente isso que se quer prever.
-# ---------------------------------------------------------------------------
-SQL_ALVO = f"""
-WITH base AS (
-    SELECT DISTINCT c.cliente_sk
-    FROM dw.dim_cliente c
-    JOIN dw.fato_pedido p ON p.cliente_sk = c.cliente_sk
-    WHERE p.data_pedido_sk <= DATE '{DATA_CORTE}'
-),
-compras_na_janela AS (
-    SELECT DISTINCT p.cliente_sk
-    FROM dw.fato_pedido p
-    JOIN dw.dim_status s ON s.status_sk = p.status_sk
-    WHERE p.data_pedido_sk >  DATE '{DATA_CORTE}'
-      AND p.data_pedido_sk <= DATE '{DATA_FIM_ALVO}'
-      AND s.status_conformado <> 'CANCELADO'   -- ajuste ao SEU mapeamento
-)
-SELECT b.cliente_sk,
-       DATE '{DATA_CORTE}' AS data_corte,
-       CASE WHEN j.cliente_sk IS NOT NULL THEN 1 ELSE 0 END AS alvo_recompra_90d
-FROM base b
-LEFT JOIN compras_na_janela j ON j.cliente_sk = b.cliente_sk
-"""
-
-
-def monta_atributos_corretos(dw):
+def consulta():
+    return f"""
+    WITH historico AS (
+        SELECT * FROM dw.fato_pedido WHERE data_pedido_sk<=DATE '{DATA_CORTE}'
+    ), pedidos AS (
+        SELECT cliente_sk,DATE '{DATA_CORTE}'-max(data_pedido_sk) recencia_dias,
+            count(*)::int frequencia_pedidos,sum(valor_total)::numeric(20,2) valor_monetario_total,
+            avg(valor_total)::numeric(20,4) ticket_medio,
+            DATE '{DATA_CORTE}'-min(data_pedido_sk) tempo_como_cliente
+        FROM historico GROUP BY cliente_sk
+    ), sac AS (
+        SELECT p.cliente_sk,count(*)::int n FROM dw.fato_atendimento s
+        JOIN historico p USING(pedido_sk)
+        WHERE s.data_abertura_sk<=DATE '{DATA_CORTE}' AND s.data_abertura_sk>=p.data_pedido_sk
+        GROUP BY p.cliente_sk
+    ), avaliacoes AS (
+        SELECT p.cliente_sk,count(*)::int n,avg(a.nota)::numeric(10,4) media
+        FROM dw.fato_avaliacao a JOIN historico p USING(pedido_sk)
+        JOIN aud.avaliacoes v USING(avaliacao_sk)
+        WHERE a.data_sk<=DATE '{DATA_CORTE}' AND a.data_sk>=p.data_pedido_sk
+          AND v.produto_consta_no_pedido
+        GROUP BY p.cliente_sk
+    ), alvo AS (
+        SELECT DISTINCT p.cliente_sk FROM dw.fato_pedido p JOIN dw.dim_status s USING(status_sk)
+        WHERE p.data_pedido_sk>DATE '{DATA_CORTE}' AND p.data_pedido_sk<=DATE '{DATA_FIM_ALVO}'
+          AND s.status_conformado<>'CANCELADO'
+    )
+    SELECT p.cliente_sk,DATE '{DATA_CORTE}' data_corte,
+        (CASE WHEN alvo.cliente_sk IS NULL THEN 0 ELSE 1 END)::smallint alvo_recompra_90d,
+        p.recencia_dias,p.frequencia_pedidos,p.valor_monetario_total,p.ticket_medio,p.tempo_como_cliente,
+        coalesce(s.n,0)::int qtd_atendimentos_sac,coalesce(a.n,0)::int qtd_avaliacoes_consistentes,
+        a.media nota_media_avaliacoes,(a.media IS NULL) sem_nota_avaliacao
+    FROM pedidos p LEFT JOIN sac s USING(cliente_sk) LEFT JOIN avaliacoes a USING(cliente_sk)
+    LEFT JOIN alvo USING(cliente_sk)
     """
-    TODO 4.1 — atributos preditivos. Todo agregado tem de ter, no WHERE,
-    a cláusula   p.data_pedido_sk <= DATE '{corte}'.
-
-    Sugestões (desenhem as suas, estas são só ponto de partida):
-      recencia_dias          dias entre a última compra e a data de corte
-      frequencia_pedidos     nº de pedidos não cancelados até o corte
-      valor_monetario        soma de valor_total até o corte
-      ticket_medio           valor_monetario / frequencia_pedidos
-      prazo_medio_entrega    média de dias_entrega dos pedidos entregues
-      taxa_cancelamento      cancelados / total
-      categorias_distintas   nº de categorias nivel1 compradas
-      canal_predominante     canal com mais pedidos
-      qtd_atendimentos_sac   atendimentos abertos até o corte
-      nota_media_avaliacoes  média das avaliações submetidas até o corte
-      tempo_como_cliente     dias entre o primeiro pedido e o corte
-
-    Cuidado com dois detalhes fáceis de errar:
-      · clientes sem pedidos no período geram NaN em médias — decidam o
-        tratamento e registrem (NaN não é zero);
-      · atributo derivado de dim_cliente pode carregar informação atualizada
-        depois do corte. Verifiquem antes de usar.
-    """
-    raise NotImplementedError
 
 
-def monta_atributos_com_vazamento(dw):
-    """
-    TODO 4.2 — reproduza os MESMOS atributos, removendo o filtro de data em
-    pelo menos dois deles (por exemplo recencia_dias e frequencia_pedidos),
-    de modo que passem a enxergar a janela do alvo.
+def validar(cx, qa):
+    qa.igual('populacao elegivel completa',escalar(cx,'SELECT count(*) FROM abt.recompra_90d'),
+        escalar(cx,f"SELECT count(DISTINCT cliente_sk) FROM dw.fato_pedido WHERE data_pedido_sk<=DATE '{DATA_CORTE}'"))
+    verifica_sql(qa,cx,'ABT grao cliente e corte', '''SELECT count(*) FROM
+        (SELECT cliente_sk,data_corte FROM abt.recompra_90d GROUP BY 1,2 HAVING count(*)<>1) x''')
+    verifica_sql(qa,cx,'ABT corte e alvo binario', f"SELECT count(*) FROM abt.recompra_90d WHERE data_corte<>DATE '{DATA_CORTE}' OR alvo_recompra_90d NOT IN(0,1)")
+    qa.entre('taxa do alvo',escalar(cx,'SELECT avg(alvo_recompra_90d) FROM abt.recompra_90d'),0.02,0.60)
+    # Recalcula os atributos de forma independente para toda a população.
+    verifica_sql(qa,cx,'alvo confere com janela e status',f"""SELECT count(*) FROM abt.recompra_90d a
+        WHERE (a.alvo_recompra_90d=1) IS DISTINCT FROM EXISTS(
+            SELECT 1 FROM dw.fato_pedido p JOIN dw.dim_status s USING(status_sk)
+            WHERE p.cliente_sk=a.cliente_sk AND p.data_pedido_sk BETWEEN DATE '{DATA_CORTE}'+1
+            AND DATE '{DATA_FIM_ALVO}' AND s.status_conformado<>'CANCELADO')""")
+    verifica_sql(qa,cx,'atributos pedidos recalculados ate corte',f"""SELECT count(*) FROM abt.recompra_90d a
+        JOIN (SELECT cliente_sk,count(*)::int n,sum(valor_total)::numeric(20,2) total,
+            round(avg(valor_total),4) ticket,min(data_pedido_sk) primeira,max(data_pedido_sk) ultima
+            FROM dw.fato_pedido WHERE data_pedido_sk<DATE '{DATA_CORTE}'+1 GROUP BY 1) p USING(cliente_sk)
+        WHERE (a.frequencia_pedidos,a.valor_monetario_total,a.ticket_medio,a.recencia_dias,a.tempo_como_cliente)
+          IS DISTINCT FROM (p.n,p.total,p.ticket,DATE '{DATA_CORTE}'-p.ultima,DATE '{DATA_CORTE}'-p.primeira)""")
+    verifica_sql(qa,cx,'atributos SAC recalculados ate corte',f"""SELECT count(*) FROM abt.recompra_90d a
+        LEFT JOIN (SELECT p.cliente_sk,count(*) n FROM dw.fato_atendimento s
+            JOIN dw.fato_pedido p USING(pedido_sk)
+            WHERE p.data_pedido_sk<=DATE '{DATA_CORTE}' AND s.data_abertura_sk
+                BETWEEN p.data_pedido_sk AND DATE '{DATA_CORTE}' GROUP BY 1) s USING(cliente_sk)
+        WHERE a.qtd_atendimentos_sac IS DISTINCT FROM coalesce(s.n,0)""")
+    verifica_sql(qa,cx,'avaliacoes validas recalculadas ate corte',f"""SELECT count(*) FROM abt.recompra_90d a
+        LEFT JOIN (SELECT p.cliente_sk,count(*) n,round(avg(v.nota),4) media
+            FROM dw.fato_avaliacao v JOIN dw.fato_pedido p USING(pedido_sk)
+            WHERE p.data_pedido_sk<=DATE '{DATA_CORTE}' AND v.data_sk BETWEEN p.data_pedido_sk AND DATE '{DATA_CORTE}'
+            AND EXISTS(SELECT 1 FROM dw.fato_item_pedido i WHERE i.pedido_sk=v.pedido_sk AND i.produto_sk=v.produto_sk)
+            GROUP BY 1) v USING(cliente_sk)
+        WHERE (a.qtd_avaliacoes_consistentes,a.nota_media_avaliacoes,a.sem_nota_avaliacao)
+            IS DISTINCT FROM (coalesce(v.n,0),v.media,(v.media IS NULL))""")
+    verifica_sql(qa,cx,'ABT contagens e recencias validas', '''SELECT count(*) FROM abt.recompra_90d
+        WHERE frequencia_pedidos<1 OR recencia_dias<0 OR tempo_como_cliente<recencia_dias
+          OR qtd_atendimentos_sac<0 OR qtd_avaliacoes_consistentes<0
+          OR (nota_media_avaliacoes IS NOT NULL AND nota_media_avaliacoes NOT BETWEEN 1 AND 5)''')
+    qa.igual('ABT PK e check preservados',escalar(cx,"""SELECT count(*) FROM pg_constraint
+        WHERE conrelid='abt.recompra_90d'::regclass AND contype IN ('p','c')"""),2)
+    verifica_fks(cx,qa,('abt',))
 
-    Acrescente um terceiro vazamento mais sutil: normalize (z-score) um
-    atributo numérico usando média e desvio calculados sobre TODAS as linhas,
-    antes de qualquer partição treino/teste.
 
-    Documente no RDT qual vazamento você introduziu em cada coluna.
-    """
-    raise NotImplementedError
-
-
-def grava(df, dw, sufixo):
-    tabela = "recompra_90d" if sufixo == "correta" else "recompra_90d_vazamento"
-    df.to_sql(tabela, dw, schema="abt", if_exists="replace",
-              index=False, method="multi", chunksize=5_000)
-    print(f"abt.{tabela}: {len(df)} linhas, {df.shape[1]} colunas")
+def construir(cx, qa):
+    for col, tipo in COLUNAS.items():
+        cx.execute(text(f'ALTER TABLE abt.recompra_90d ADD COLUMN IF NOT EXISTS {col} {tipo}'))
+    cx.execute(text('TRUNCATE abt.recompra_90d'))
+    cols = 'cliente_sk,data_corte,alvo_recompra_90d,'+','.join(COLUNAS)
+    cx.execute(text(f'INSERT INTO abt.recompra_90d({cols}) '+consulta()))
+    validar(cx,qa)
 
 
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--correta", action="store_true")
-    ap.add_argument("--vazamento", action="store_true")
-    args = ap.parse_args()
-    if not (args.correta or args.vazamento):
-        ap.error("escolha --correta ou --vazamento")
+def main():
+    ap=argparse.ArgumentParser(description=__doc__)
+    grupo=ap.add_mutually_exclusive_group(required=True)
+    grupo.add_argument('--correta',action='store_true')
+    grupo.add_argument('--vazamento',action='store_true')
+    args=ap.parse_args()
+    if args.vazamento:
+        ap.error('Modo --vazamento não implementado. Modo disponível: --correta.')
+    engine=eng_dw()
+    executar('04_abt_correta',engine,construir)
+    with engine.connect() as cx:
+        resumo=dict(cx.execute(text('''SELECT count(*) clientes,sum(alvo_recompra_90d) positivos,
+            avg(alvo_recompra_90d) taxa_alvo,sum(qtd_atendimentos_sac) atendimentos_elegiveis,
+            sum(qtd_avaliacoes_consistentes) avaliacoes_elegiveis,
+            count(*) FILTER(WHERE nota_media_avaliacoes IS NULL) clientes_sem_nota
+            FROM abt.recompra_90d''')).mappings().one())
+        salva_json('semana3_abt.json',resumo)
+        print(resumo)
 
-    dw = eng_dw()
-    alvo = pd.read_sql(text(SQL_ALVO), dw)
-    print(f"alvo: {len(alvo)} clientes | taxa de recompra = "
-          f"{alvo['alvo_recompra_90d'].mean():.3f}")
 
-    qa = Suite(etapa="04_abt_" + ("correta" if args.correta else "vazamento"))
-    qa.entre("taxa do alvo", float(alvo["alvo_recompra_90d"].mean()), 0.02, 0.60,
-             "classe extremamente desbalanceada indica erro na janela")
-    qa.unico("cliente_sk no alvo", alvo["cliente_sk"])
-
-    atributos = (monta_atributos_corretos(dw) if args.correta
-                 else monta_atributos_com_vazamento(dw))
-
-    antes = len(alvo)
-    abt = alvo.merge(atributos, on="cliente_sk", how="left")
-    qa.cardinalidade_preservada("junção alvo x atributos", antes, len(abt))
-
-    # TODO 4.3 — na versão CORRETA, acrescente uma asserção que verifique,
-    # por amostragem, que nenhum atributo usa dado posterior ao corte.
-    # Uma forma prática: recalcule um atributo restringindo a data e compare.
-
-    grava(abt, dw, "correta" if args.correta else "vazamento")
-    qa.registrar(dw)
-    qa.imprimir()
+if __name__=='__main__':
+    main()

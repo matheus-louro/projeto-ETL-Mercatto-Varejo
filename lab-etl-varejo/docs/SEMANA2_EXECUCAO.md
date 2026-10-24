@@ -1,8 +1,8 @@
 # Entrega 2 — execução e conferência
 
-O RDT parcial está em `../Relatorio_Decisoes_RDT_Semana2.md`, relativo à pasta
-do laboratório. A entrega inclui as etapas 1 e 2, seus módulos de apoio e as
-asserções; não exige o carregamento dos fatos nem a ABT nesta semana.
+O RDT das etapas 1 e 2 está em `../Relatorio_Decisoes_RDT_Semana2.md`, relativo
+à pasta do laboratório. O escopo desta documentação abrange extração,
+conformação, módulos de apoio e asserções de qualidade.
 
 ## Executar
 
@@ -14,7 +14,7 @@ docker compose exec -T etl python 01_extracao.py
 docker compose exec -T etl python 02_transformacao.py
 ```
 
-Na primeira subida, aguarde o seed terminar. O Dockerfile instala também
+A primeira execução depende da conclusão do seed. O Dockerfile instala também
 `requirements_diagnostico.txt`, que complementa os requisitos originais com a
 autenticação necessária ao MySQL 8. As origens são acessadas como `etl_ro`.
 
@@ -40,10 +40,9 @@ deve ser aplicada ao dia de negócio em `America/Sao_Paulo`, explicitado no RDT;
 os instantes completos ficam armazenados com fuso. Configurações analíticas
 originais não foram alteradas.
 
-Os dados conformados ficam separados da staging bruta. Para integrar as etapas
-futuras, consultar `cfm` e os respectivos mapas; os scripts 3 a 5 continuam com
-o escopo original de desenvolvimento posterior. A etapa 2 rejeita fatos/ABT já
-preenchidos antes de reconstruir dimensões, evitando apagar trabalho posterior.
+Os dados conformados ficam separados da staging bruta. A carga do DW utiliza
+`cfm` e os respectivos mapas. A etapa 2 rejeita fatos ou ABT preenchidos antes
+de reconstruir dimensões, preservando a integridade das referências existentes.
 
 ## Verificar reexecução
 

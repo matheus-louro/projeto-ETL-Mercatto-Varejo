@@ -1,131 +1,126 @@
-# Laboratório de ETL — Mercatto Varejo
+# ETL Mercatto Varejo
 
-Projeto prático da disciplina de **Mineração de Dados** · IFMT · 2026/2
+Projeto prático de Mineração de Dados — Engenharia da Computação, IFMT, 2026/2.
 
-Quatro fontes heterogêneas, cerca de **1,9 milhão de registros**, um repositório
-analítico a construir e uma pergunta preditiva a responder no Orange.
+**Equipe:** Matheus Henrique Moreira Louro e Lucas Ribeiro Luchesi.
 
----
+Integração de quatro fontes heterogêneas em um esquema estrela e construção de
+uma base analítica para previsão de recompra. A escala 1,0 contém 2.205.864
+registros nas fontes, incluindo as categorias do e-commerce.
 
-## Entrega da Semana 2
+## Implementação
 
-As etapas de extração e conformação estão implementadas. Consulte
-[execução e conferência da Entrega 2](docs/SEMANA2_EXECUCAO.md) e o
-[RDT parcial](../Relatorio_Decisoes_RDT_Semana2.md).
-As cópias brutas permanecem em `stg`; resultados derivados e mapeamentos ficam
-em `cfm`. A imagem ETL instala a dependência complementar do MySQL no build.
-
-## 1. Requisitos
-
-* Docker e Docker Compose (v2)
-* 8 GB de RAM recomendados · 4 GB funcionam com `ESCALA=0.2`
-* ~2 GB livres em disco
-* [Orange Data Mining](https://orangedatamining.com/) instalado na máquina (não roda em contêiner)
-
-## 2. Subir o ambiente
-
-```bash
-cp .env.example .env          # ajuste ESCALA se sua máquina for modesta
-docker compose up -d --build
-docker compose logs -f seed   # acompanhe a geração e a carga (~3 a 5 minutos)
-```
-
-Quando o serviço `seed` terminar com `ambiente pronto.`, está tudo no lugar.
-
-### O que subiu
-
-| Serviço | O que é | Acesso |
+| Etapa | Script | Resultado |
 |---|---|---|
-| `mysql_legado` | ERP legado, charset `latin1` | `localhost:3307` · `etl_ro` / `etl_ro` |
-| `pg_ecommerce` | Plataforma de e-commerce, `UTF-8` | `localhost:5433` · `etl_ro` / `etl_ro` |
-| `pg_dw` | Destino analítico (você escreve aqui) | `localhost:5434` · `postgres` / `postgres` |
-| `adminer` | Inspeção pelo navegador | <http://localhost:8080> |
-| `etl` | Contêiner de trabalho (Python) | `docker compose exec etl bash` |
+| Perfilamento | `00_perfilamento.py` | Descrição das fontes |
+| Extração | `01_extracao.py` | Cópias integrais e tipadas em `stg` |
+| Conformação | `02_transformacao.py` | Identidades, medidas, mapas e indicadores em `cfm` |
+| Carga | `03_carga_dw.py` | Dimensões, quatro fatos, quarentena e auditoria |
+| ABT correta | `04_abt.py --correta` | Uma linha por cliente na data de corte |
+| Exportação | `05_exportar_orange.py` | CSV das ABTs disponíveis no formato do Orange |
 
-As duas fontes de arquivo ficam em `./dados/`:
-`atendimentos_sac.csv` e `avaliacoes_marketplace.json`.
+O modo experimental `04_abt.py --vazamento` não está implementado nesta versão.
 
-> Os usuários das origens são **somente leitura**, de propósito. Corrigir o dado
-> na origem não é uma opção disponível — como quase nunca é.
+## Documentação
 
-## 3. Estrutura
+- [RDT da Semana 2](../Relatorio_Decisoes_RDT_Semana2.md): decisões de extração e conformação.
+- [RDT da Semana 3](../Relatorio_Decisoes_RDT_Semana3.md): fichas 10–13, reconciliação e desenho da ABT.
+- [Execução e conferência das etapas 1 e 2](docs/SEMANA2_EXECUCAO.md).
+- [Execução, testes e restauração do DW](docs/SEMANA3_EXECUCAO.md).
+- [Execução do diagnóstico](docs/DIAGNOSTICO_EXECUCAO.md).
+- [Dicionário de dados](docs/DICIONARIO_DE_DADOS.md).
+- [Resultados de validação da Semana 3](../validacao/semana3/): asserções, contagens e referências de comparação.
 
-```
-.
-├── docker-compose.yml
-├── dados/                    fontes de arquivo + CSVs de carga (gerados)
-├── sql/                      DDL das origens e do DW
-├── etl/                      onde vocês trabalham
-│   ├── config.py             conexões e parâmetros analíticos (não alterar)
-│   ├── 00_perfilamento.py    PRONTO — modelo de perfilamento
-│   ├── 01_extracao.py        extração completa com verificação de conteúdo
-│   ├── 02_transformacao.py   conformação da Semana 2
-│   ├── transformacoes_semana2.py  decisões e verificações da conformação
-│   ├── semana2_utils.py      funções compartilhadas das etapas
-│   ├── verificar_semana2.py  comparação integral após reexecução
-│   ├── 03_carga_dw.py        esqueleto
-│   ├── 04_abt.py             esqueleto (inclui o experimento de vazamento)
-│   ├── 05_exportar_orange.py PRONTO — exporta a ABT para o Orange
-│   └── qualidade/assercoes.py PRONTO — framework de asserções
-├── saida/                    relatórios e CSVs para o Orange
-└── docs/
-    ├── DICIONARIO_DE_DADOS.md   incompleto, como na vida real
-    └── MODELO_RDT.md            modelo do Registro de Decisões
-```
+## Ambiente
 
-## 4. Primeiro comando
+Requisitos: Docker e Docker Compose v2. O ambiente fornecido recomenda 8 GB de
+RAM. A configuração `ESCALA=1.0` reproduz as contagens dos relatórios; escalas
+menores geram populações diferentes. A construção inicial das imagens depende
+de acesso à internet. O Orange é executado fora dos contêineres.
 
-```bash
-docker compose exec etl python 00_perfilamento.py
-```
+| Serviço | Função | Acesso local |
+|---|---|---|
+| `mysql_legado` | ERP legado, MySQL 8, `latin1`, somente leitura | `localhost:3307`, `etl_ro` / `etl_ro` |
+| `pg_ecommerce` | E-commerce, PostgreSQL 16, UTF-8, somente leitura | `localhost:5433`, `etl_ro` / `etl_ro` |
+| `pg_dw` | Destino analítico, PostgreSQL 16 | `localhost:5434`, `postgres` / `postgres` |
+| `adminer` | Consulta aos bancos por interface web | <http://localhost:8080> |
+| `etl` | Execução do pipeline em Python | `docker compose exec etl bash` |
 
-Leia a saída inteira antes de escrever qualquer transformação.
+As fontes de arquivo são `dados/atendimentos_sac.csv` e
+`dados/avaliacoes_marketplace.json`. O serviço `seed` gera os dados com semente
+fixa e inicializa os bancos. O acesso ETL às duas origens relacionais utiliza
+usuários de somente leitura.
 
-## 5. Ordem de execução do pipeline
+## Execução em instalação nova
 
-```bash
-docker compose exec etl python 01_extracao.py
-docker compose exec etl python 02_transformacao.py
-docker compose exec etl python 03_carga_dw.py
-docker compose exec etl python 04_abt.py --correta
-docker compose exec etl python 04_abt.py --vazamento
-docker compose exec etl python 05_exportar_orange.py
+Comandos na pasta `lab-etl-varejo`:
+
+```powershell
+Copy-Item .env.example .env
+docker compose up -d --build
+docker compose logs seed
 ```
 
-O pipeline precisa rodar do zero, na ordem, sem intervenção manual. Isso é
-avaliado: `docker compose down -v && docker compose up -d --build` seguido dos
-seis comandos acima tem de reproduzir exatamente o mesmo resultado.
+A execução do pipeline depende da conclusão bem-sucedida do `seed`.
+Cada etapa deve encerrar com código zero antes da execução da etapa seguinte.
 
-## 6. Consultar as asserções
+```powershell
+docker compose exec -T etl python 01_extracao.py
+docker compose exec -T etl python 02_transformacao.py
+docker compose exec -T etl python 03_carga_dw.py
+docker compose exec -T etl python 04_abt.py --correta
+```
+
+O perfilamento e a exportação são executados pelos comandos:
+
+```powershell
+docker compose exec -T etl python 00_perfilamento.py
+docker compose exec -T etl python 05_exportar_orange.py
+```
+
+## Camadas e rastreabilidade
+
+- `stg`: cópia fiel das fontes, com metadados de procedência.
+- `cfm`: dados conformados e mapas de identidade das etapas 1 e 2.
+- `dw`: dimensões e fatos do esquema estrela.
+- `abt`: base de recompra com corte em 30/06/2025 e alvo entre 01/07 e 28/09/2025.
+- `aud`: quarentena, rastreabilidade de itens e arquivos e reconciliação financeira.
+- `qa`: histórico das asserções de qualidade por etapa.
+
+A etapa 2 exige destino sem fatos ou ABT preenchidos. A etapa 3 substitui os
+fatos atomicamente e invalida a ABT anterior. A etapa 4 reconstrói a ABT a partir
+do DW carregado. Os testes de cadeia completa utilizam um banco de destino vazio.
+
+Os módulos `semana2_utils.py` e `semana3_utils.py` concentram funções de apoio.
+`verificar_semana2.py` e `verificar_semana3.py` comparam reexecuções;
+`testar_semana3.py` verifica invariância temporal e bloqueio por cliente ausente.
+Os resultados em JSON são gravados em `saida/`.
+
+## Consulta às asserções
 
 ```sql
-SELECT etapa, nome, valor_obtido, valor_esperado, aprovado, executado_em
-FROM qa.execucao_assercao ORDER BY id DESC LIMIT 50;
+WITH ultima AS (
+  SELECT etapa, max(executado_em) instante
+  FROM qa.execucao_assercao GROUP BY etapa
+)
+SELECT q.etapa, count(*) assercoes,
+       count(*) FILTER (WHERE NOT q.aprovado) falhas
+FROM qa.execucao_assercao q
+JOIN ultima u ON q.etapa=u.etapa AND q.executado_em=u.instante
+GROUP BY q.etapa ORDER BY q.etapa;
 ```
 
-## 7. Reiniciar do zero
+O histórico conserva execuções de desenvolvimento. A avaliação do estado
+validado considera a última execução de cada etapa. As instruções de
+restauração do dump e comparação integral estão em
+[SEMANA3_EXECUCAO.md](docs/SEMANA3_EXECUCAO.md).
 
-```bash
-docker compose down -v          # apaga volumes dos bancos
-rm -rf dados saida              # apaga dados gerados
-docker compose up -d --build
-```
+## Diagnóstico de execução
 
-A semente do gerador é fixa: os dados voltam idênticos.
-
-## 8. Problemas comuns
-
-**`LOAD DATA LOCAL INFILE` recusado** — o `docker-compose.yml` já sobe o MySQL
-com `--local-infile=1`. Se editou o arquivo, verifique.
-
-**Acentos aparecem como `Ã§`** — você leu a base `latin1` com `utf8`. A conexão
-correta está em `config.py`. O problema é de leitura, não do dado.
-
-**`seed` terminou com erro** — `docker compose logs seed`. Para repetir a carga:
-`docker compose run --rm seed python carregar.py --forcar`.
-
-**Contêiner sem memória durante a geração** — use `ESCALA=0.2` no `.env`,
-derrube tudo com `docker compose down -v` e suba de novo.
-
-**Orange não abre o CSV** — use os arquivos de `./saida/`, que já vêm com o
-cabeçalho de três linhas do Orange. Não use os CSVs de `./dados/`.
+| Ocorrência | Verificação técnica |
+|---|---|
+| `LOAD DATA LOCAL INFILE` recusado | O MySQL utiliza `--local-infile=1`, conforme o Compose fornecido. |
+| Acentuação incorreta no legado | A conexão deve respeitar `charset=latin1`, definido em `config.py`. |
+| Falha no `seed` | O diagnóstico está disponível em `docker compose logs seed`. |
+| Falha de autenticação PyMySQL/MySQL 8 | A imagem ETL instala `cryptography` por `requirements_diagnostico.txt`. |
+| Arquivo incompatível com Orange | Os CSVs de `saida/` gerados pelo exportador incluem cabeçalho de três linhas com tipos e papéis. |

@@ -1,0 +1,191 @@
+[
+  {
+    "nome": "linhas legado_clientes",
+    "descricao": "",
+    "valor_obtido": 47250.0,
+    "valor_esperado": "= 47250",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel legado_clientes",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas legado_produtos",
+    "descricao": "",
+    "valor_obtido": 3000.0,
+    "valor_esperado": "= 3000",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel legado_produtos",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas legado_pedidos",
+    "descricao": "",
+    "valor_obtido": 130000.0,
+    "valor_esperado": "= 130000",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel legado_pedidos",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas legado_itens_pedido",
+    "descricao": "",
+    "valor_obtido": 397086.0,
+    "valor_esperado": "= 397086",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel legado_itens_pedido",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas ecom_customer",
+    "descricao": "",
+    "valor_obtido": 85000.0,
+    "valor_esperado": "= 85000",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel ecom_customer",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas ecom_category",
+    "descricao": "",
+    "valor_obtido": 21.0,
+    "valor_esperado": "= 21",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel ecom_category",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas ecom_product",
+    "descricao": "",
+    "valor_obtido": 12000.0,
+    "valor_esperado": "= 12000",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel ecom_product",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas ecom_orders",
+    "descricao": "",
+    "valor_obtido": 280000.0,
+    "valor_esperado": "= 280000",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel ecom_orders",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas ecom_order_item",
+    "descricao": "",
+    "valor_obtido": 995367.0,
+    "valor_esperado": "= 995367",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel ecom_order_item",
+    "descricao": "SHA-256 dos valores lidos na origem e na staging, em ordem de PK",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas sac_atendimentos",
+    "descricao": "",
+    "valor_obtido": 96140.0,
+    "valor_esperado": "= 96140",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel sac_atendimentos",
+    "descricao": "Campos vazios, NULL literal, vírgula decimal e quebras internas preservados",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas mkt_avaliacoes",
+    "descricao": "",
+    "valor_obtido": 160000.0,
+    "valor_esperado": "= 160000",
+    "aprovado": true
+  },
+  {
+    "nome": "conteudo fiel mkt_avaliacoes",
+    "descricao": "Documento original preservado; tipos JSON e omissões mantidos",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "protocolos SAC preenchidos",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "review_id unico",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "documento JSON preserva estrutura e tipos",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "JSON distingue omissao null e tipos",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "extracao sem excecao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  }
+]

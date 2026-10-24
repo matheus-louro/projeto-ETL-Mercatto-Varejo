@@ -11,7 +11,7 @@ preservados. Na Semana 2, o Dockerfile passou a instalar a dependência compleme
 neste ambiente. Ela está declarada separadamente em
 `etl/requirements_diagnostico.txt`.
 
-Na pasta `lab-etl-varejo`, reconstrua o ambiente para instalar o complemento:
+Comandos de construção da imagem e execução na pasta `lab-etl-varejo`:
 
 ```powershell
 docker compose up -d --build

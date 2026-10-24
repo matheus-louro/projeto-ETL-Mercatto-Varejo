@@ -23,7 +23,7 @@ def main():
                 print(etapa.__name__,flush=True)
                 etapa(qa,cx,metricas)
             if qa.falhou():
-                raise RuntimeError('Asserções em falha: conformação revertida, consulte qa.execucao_assercao')
+                raise RuntimeError('Asserções reprovadas; conformação revertida. Resultados em qa.execucao_assercao.')
     except Exception as exc:
         qa.igual('transformacao sem excecao',0,1,str(exc).splitlines()[0])
         qa.registrar(dw)

@@ -1,0 +1,282 @@
+[
+  {
+    "nome": "mapa completo clientes legado",
+    "descricao": "",
+    "valor_obtido": 47250.0,
+    "valor_esperado": "= 47250",
+    "aprovado": true
+  },
+  {
+    "nome": "mapa completo clientes ecommerce",
+    "descricao": "",
+    "valor_obtido": 85000.0,
+    "valor_esperado": "= 85000",
+    "aprovado": true
+  },
+  {
+    "nome": "cpf sem duplicatas entre validos",
+    "descricao": "",
+    "valor_obtido": 0,
+    "valor_esperado": "= 0 duplicados",
+    "aprovado": true
+  },
+  {
+    "nome": "cpf sem duplicatas entre invalidos",
+    "descricao": "",
+    "valor_obtido": 0,
+    "valor_esperado": "= 0 duplicados",
+    "aprovado": true
+  },
+  {
+    "nome": "cardinalidade clientes",
+    "descricao": "junção não pode multiplicar linhas",
+    "valor_obtido": 118215,
+    "valor_esperado": "<= 132250",
+    "aprovado": true
+  },
+  {
+    "nome": "origem unificacao",
+    "descricao": "",
+    "valor_obtido": 0,
+    "valor_esperado": "todos em ['AMBOS', 'ECOM', 'LEGADO']",
+    "aprovado": true
+  },
+  {
+    "nome": "pedidos sem mapa de cliente",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "status de origem sem mapeamento",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "nove status de origem",
+    "descricao": "",
+    "valor_obtido": 9.0,
+    "valor_esperado": "= 9",
+    "aprovado": true
+  },
+  {
+    "nome": "cardinalidade pedidos preservada",
+    "descricao": "",
+    "valor_obtido": 410000.0,
+    "valor_esperado": "= 410000",
+    "aprovado": true
+  },
+  {
+    "nome": "cardinalidade itens preservada",
+    "descricao": "",
+    "valor_obtido": 1392453.0,
+    "valor_esperado": "= 1392453",
+    "aprovado": true
+  },
+  {
+    "nome": "reconciliacao por pedido com origem",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "mercadoria bruta menos desconto igual itens liquidos",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "nenhum desconto sentinela conformado",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "total igual mercadoria mais frete menos desconto",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "frete preserva valor e sinal da origem",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "cardinalidade produtos preservada",
+    "descricao": "",
+    "valor_obtido": 15000.0,
+    "valor_esperado": "= 15000",
+    "aprovado": true
+  },
+  {
+    "nome": "ativo S e N corretamente mapeados",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "categoria origem preservada",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "preco referencia preservado inclusive suspeitos",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "sku de produto unico",
+    "descricao": "",
+    "valor_obtido": 0,
+    "valor_esperado": "= 0 duplicados",
+    "aprovado": true
+  },
+  {
+    "nome": "entrega valida nunca anterior ao pedido",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "sentinela de entrega sinalizada e anulada",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "UTC legado representa horario local assumido",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "UTC ecommerce preserva instante original",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "fronteira do corte em horario de negocio",
+    "descricao": "Guardar em UTC não desloca o dia usado no corte: consultar data_pedido_local",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "SAC protocolos repetidos sem conflito de conteudo",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "SAC uma linha por protocolo",
+    "descricao": "",
+    "valor_obtido": 95000.0,
+    "valor_esperado": "= 95000",
+    "aprovado": true
+  },
+  {
+    "nome": "avaliacoes cardinalidade preservada",
+    "descricao": "",
+    "valor_obtido": 160000.0,
+    "valor_esperado": "= 160000",
+    "aprovado": true
+  },
+  {
+    "nome": "SAC encontra pedido e cliente sem multiplicar",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "avaliacoes encontram pedido e produto",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "horas negativas anuladas e sinalizadas",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "notas conformadas no dominio",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "JSON sem fuso recebe zona assumida",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "JSON com fuso preserva instante",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "ausencias sem regra de tratamento",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "cidade N/A nao e cidade valida",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "CPF ausente nao foi unificado entre pessoas",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "nota JSON ausente mantida NULL",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "transformacao sem excecao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= 1",
+    "aprovado": true
+  }
+]

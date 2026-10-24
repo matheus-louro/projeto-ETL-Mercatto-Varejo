@@ -10,7 +10,7 @@
 
 ## Escopo e evidências
 
-Esta entrega contém as fichas RDT-01 a RDT-09 e as etapas executáveis `01_extracao.py` e `02_transformacao.py`. A ligação dos arquivos aos pedidos, também exigida na Semana 2, é registrada na ficha antecipada RDT-13. As fichas adicionais RDT-16 e RDT-17 tratam duplicatas do SAC e preços suspeitos. As fichas de carga dos fatos e modelagem serão completadas nas semanas seguintes.
+Este relatório documenta as fichas RDT-01 a RDT-09 e as etapas executáveis `01_extracao.py` e `02_transformacao.py`. A ligação dos arquivos aos pedidos é registrada na ficha RDT-13. As fichas adicionais RDT-16 e RDT-17 tratam duplicatas do SAC e preços suspeitos. O escopo corresponde à extração e à conformação das fontes.
 
 As contagens foram medidas nas fontes completas. Valores de geração não foram usados como prova de identidade real de clientes nem como substituição de medição. Os resultados estão em `saida/semana2_resultados.json`; o inventário de ausências também está em `cfm.inventario_ausencias`.
 
@@ -240,7 +240,7 @@ Não foram observados nulls JSON explícitos nesses campos; sua distinção de o
 
 **Decisão e justificativa.** `(origem_sistema,id_pedido_origem)` gera LEG-id ou ECOM-id; avaliações usam `order.ref` e `product.sku`. O cliente associado é o titular do pedido, sem confirmar quem contatou o SAC. O CPF informado é preservado para auditoria. A relação produto-item é sinalizada por `produto_consta_no_pedido`, sem apagar avaliações nem tratá-las automaticamente como compras comprovadas. Uma nova referência sem destino faz a asserção falhar e a conformação reverter, mantendo o bruto para decisão explícita; não há descarte silencioso.
 
-**O que se perde.** Atribuir ao titular não comprova autoria do contato. Avaliações inconsistentes exigem considerar o indicador em análises futuras; o RDT da carga deverá retomar esse limite.
+**O que se perde.** Atribuir ao titular não comprova autoria do contato. O uso analítico de avaliações inconsistentes depende da verificação do indicador de consistência entre produto e pedido.
 
 **Registros afetados.** 95.000 protocolos únicos (100% do SAC conformado, após RDT-16) e 160.000 avaliações (100%). Os vínculos não multiplicam eventos.
 
@@ -305,9 +305,9 @@ docker compose exec -T etl python 01_extracao.py
 docker compose exec -T etl python 02_transformacao.py
 ```
 
-O Dockerfile instala os requisitos originais e a dependência complementar de autenticação do MySQL, sem modificar `requirements.txt`. A extração é atômica por tabela; a conformação inteira é transacional. Se houver fatos/ABT de semanas posteriores, a etapa 2 interrompe antes de truncar dimensões: usar um destino vazio ou isolado para esta entrega.
+O Dockerfile instala os requisitos originais e a dependência complementar de autenticação do MySQL, sem modificar `requirements.txt`. A extração é atômica por tabela; a conformação inteira é transacional. A etapa 2 exige destino sem fatos ou ABT preenchidos e interrompe antes de truncar dimensões caso essa condição não seja atendida.
 
-**Resultado verificado:** 27 asserções de extração, 40 de transformação e 51 de comparação após reexecutar integralmente as duas etapas, todas aprovadas (118 verificações, zero falhas nas últimas execuções). As 25 tabelas comparadas mantiveram contagens e hashes idênticos. Esse resultado verifica estas etapas; não certifica a carga de fatos e a modelagem ainda não implementadas.
+**Resultado verificado:** 27 asserções de extração, 40 de transformação e 51 de comparação após reexecutar integralmente as duas etapas, todas aprovadas (118 verificações, zero falhas nas últimas execuções). As 25 tabelas comparadas mantiveram contagens e hashes idênticos. O resultado se refere à extração e à conformação; a carga dos fatos e a modelagem estão fora do escopo desta verificação.
 
 As asserções ficam em `qa.execucao_assercao` e em `saida/semana2_qa_extracao.json` e `semana2_qa_transformacao.json`. Tentativas anteriores em falha permanecem no histórico. Para consultar somente a execução mais recente de cada etapa:
 
@@ -331,7 +331,7 @@ docker compose exec -T etl python 02_transformacao.py
 docker compose exec -T etl python verificar_semana2.py --comparar
 ```
 
-Os comandos produzem `saida/semana2_referencia.json`, `semana2_verificacao.json` e `semana2_qa_reexecucao.json`. A verificação cobre a reexecução integral destas etapas; as etapas 3 a 5 ainda não fazem parte da entrega da Semana 2.
+Os comandos produzem `saida/semana2_referencia.json`, `semana2_verificacao.json` e `semana2_qa_reexecucao.json`. A verificação cobre a reexecução integral das etapas 1 e 2.
 
 ## Referências
 

@@ -1,4 +1,4 @@
-"""Apoio às etapas 1 e 2; não altera config.py nem o framework fornecido."""
+"""Serialização, resumos, hashes e finalização das asserções do pipeline."""
 import hashlib
 import json
 from datetime import date, datetime, timezone

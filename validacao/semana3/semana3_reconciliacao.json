@@ -1,0 +1,22 @@
+[
+  {
+    "sistema": "ECOM",
+    "pedidos_origem": 280000,
+    "pedidos_dw": 280000,
+    "total_origem": "745850860.33",
+    "total_dw": "745850860.33",
+    "desvio_relativo": "0",
+    "tolerancia": "0.001",
+    "consulta_origem": "SUM(orders.total_amount + orders.freight_amount)"
+  },
+  {
+    "sistema": "LEGADO",
+    "pedidos_origem": 130000,
+    "pedidos_dw": 130000,
+    "total_origem": "281084957.13",
+    "total_dw": "281084957.13",
+    "desvio_relativo": "0",
+    "tolerancia": "0.001",
+    "consulta_origem": "SUM(PEDIDOS.VALOR_TOTAL)"
+  }
+]

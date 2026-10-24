@@ -38,7 +38,7 @@ def insere(cx, schema, nome, linhas):
 
 
 def prepara(cx):
-    # Não apagar trabalho da Semana 3 ao corrigir/reexecutar apenas a Semana 2.
+    # Impede a reconstrução de dimensões referenciadas por fatos ou ABT carregados.
     fatos = ['dw.fato_pedido', 'dw.fato_item_pedido', 'dw.fato_atendimento',
              'dw.fato_avaliacao', 'abt.recompra_90d']
     if any(escalar(cx, f'SELECT EXISTS(SELECT 1 FROM {t})') for t in fatos):

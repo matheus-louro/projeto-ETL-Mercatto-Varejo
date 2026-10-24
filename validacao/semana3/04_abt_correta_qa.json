@@ -1,0 +1,86 @@
+[
+  {
+    "nome": "populacao elegivel completa",
+    "descricao": "",
+    "valor_obtido": 110195.0,
+    "valor_esperado": "= 110195",
+    "aprovado": true
+  },
+  {
+    "nome": "ABT grao cliente e corte",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "ABT corte e alvo binario",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "taxa do alvo",
+    "descricao": "",
+    "valor_obtido": 0.2183039157856527,
+    "valor_esperado": "[0.02, 0.6]",
+    "aprovado": true
+  },
+  {
+    "nome": "alvo confere com janela e status",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "atributos pedidos recalculados ate corte",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "atributos SAC recalculados ate corte",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "avaliacoes validas recalculadas ate corte",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "ABT contagens e recencias validas",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "ABT PK e check preservados",
+    "descricao": "",
+    "valor_obtido": 2.0,
+    "valor_esperado": "= 2",
+    "aprovado": true
+  },
+  {
+    "nome": "FK abt.recompra_90d.cliente_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FKs validadas no catalogo",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  }
+]

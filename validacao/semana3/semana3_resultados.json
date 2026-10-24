@@ -1,0 +1,152 @@
+{
+  "reconciliacao": [
+    {
+      "sistema": "ECOM",
+      "pedidos_origem": 280000,
+      "pedidos_dw": 280000,
+      "total_origem": "745850860.33",
+      "total_dw": "745850860.33",
+      "desvio_relativo": "0",
+      "tolerancia": "0.001",
+      "consulta_origem": "SUM(orders.total_amount + orders.freight_amount)"
+    },
+    {
+      "sistema": "LEGADO",
+      "pedidos_origem": 130000,
+      "pedidos_dw": 130000,
+      "total_origem": "281084957.13",
+      "total_dw": "281084957.13",
+      "desvio_relativo": "0",
+      "tolerancia": "0.001",
+      "consulta_origem": "SUM(PEDIDOS.VALOR_TOTAL)"
+    }
+  ],
+  "itens": [
+    {
+      "sistema_origem": "ECOM",
+      "total": 995367,
+      "quarentena": 14709,
+      "valor_quarentena": "2204879.10"
+    },
+    {
+      "sistema_origem": "LEGADO",
+      "total": 397086,
+      "quarentena": 5868,
+      "valor_quarentena": "586213.20"
+    }
+  ],
+  "grao_item": [
+    {
+      "grupos_produto_repetido": 320,
+      "linhas_nos_grupos": "640",
+      "linhas_colapsadas_se_agregar": "320"
+    }
+  ],
+  "sac": [
+    {
+      "total": 95000,
+      "sem_pedido": 0,
+      "cpf_divergente": 86954,
+      "cpf_nao_comparavel": 8045,
+      "anterior_pedido": 47667
+    }
+  ],
+  "avaliacoes": [
+    {
+      "total": 160000,
+      "sem_pedido": 0,
+      "sem_produto": 0,
+      "produto_fora_pedido": 159920,
+      "anterior_pedido": 79777
+    }
+  ],
+  "abt": [
+    {
+      "clientes": 110195,
+      "positivos": 24056,
+      "taxa_alvo": "0.21830391578565270657",
+      "atendimentos_elegiveis": 33015,
+      "avaliacoes_elegiveis": 26,
+      "clientes_sem_nota": 110170
+    }
+  ],
+  "qa_ultima_execucao": [
+    {
+      "etapa": "01_extracao",
+      "assercoes": 27,
+      "falhas": 0
+    },
+    {
+      "etapa": "02_transformacao",
+      "assercoes": 40,
+      "falhas": 0
+    },
+    {
+      "etapa": "02_verificacao_reexecucao",
+      "assercoes": 51,
+      "falhas": 0
+    },
+    {
+      "etapa": "03_carga_dw",
+      "assercoes": 35,
+      "falhas": 0
+    },
+    {
+      "etapa": "03_testes_semana3",
+      "assercoes": 6,
+      "falhas": 0
+    },
+    {
+      "etapa": "03_verificacao_reexecucao",
+      "assercoes": 66,
+      "falhas": 0
+    },
+    {
+      "etapa": "04_abt_correta",
+      "assercoes": 12,
+      "falhas": 0
+    }
+  ],
+  "contagens": [
+    {
+      "tabela": "abt.recompra_90d",
+      "linhas": 110195
+    },
+    {
+      "tabela": "dw.dim_canal",
+      "linhas": 6
+    },
+    {
+      "tabela": "dw.dim_cliente",
+      "linhas": 118215
+    },
+    {
+      "tabela": "dw.dim_produto",
+      "linhas": 15000
+    },
+    {
+      "tabela": "dw.dim_status",
+      "linhas": 9
+    },
+    {
+      "tabela": "dw.dim_tempo",
+      "linhas": 1217
+    },
+    {
+      "tabela": "dw.fato_atendimento",
+      "linhas": 95000
+    },
+    {
+      "tabela": "dw.fato_avaliacao",
+      "linhas": 160000
+    },
+    {
+      "tabela": "dw.fato_item_pedido",
+      "linhas": 1371876
+    },
+    {
+      "tabela": "dw.fato_pedido",
+      "linhas": 410000
+    }
+  ]
+}

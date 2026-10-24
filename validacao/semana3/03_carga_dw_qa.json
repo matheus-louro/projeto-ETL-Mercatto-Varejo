@@ -1,0 +1,247 @@
+[
+  {
+    "nome": "pedidos sem cliente correspondente",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "canal unico por sistema e rotulo",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK abt.recompra_90d.cliente_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_atendimento.cliente_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_atendimento.data_abertura_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_atendimento.data_fechamento_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_atendimento.pedido_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_avaliacao.data_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_avaliacao.pedido_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_avaliacao.produto_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_item_pedido.pedido_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_item_pedido.produto_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_pedido.canal_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_pedido.cliente_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_pedido.data_entrega_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_pedido.data_pedido_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK dw.fato_pedido.status_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FKs validadas no catalogo",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "cardinalidade fato_pedido",
+    "descricao": "",
+    "valor_obtido": 410000.0,
+    "valor_esperado": "= 410000",
+    "aprovado": true
+  },
+  {
+    "nome": "cardinalidade fato_atendimento",
+    "descricao": "",
+    "valor_obtido": 95000.0,
+    "valor_esperado": "= 95000",
+    "aprovado": true
+  },
+  {
+    "nome": "cardinalidade fato_avaliacao",
+    "descricao": "",
+    "valor_obtido": 160000.0,
+    "valor_esperado": "= 160000",
+    "aprovado": true
+  },
+  {
+    "nome": "prazo_nao_negativo",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "identidade financeira por pedido",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "reconciliacao itens por pedido",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "particao itens sem perda nem sobreposicao",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "rastro de todas as linhas de item",
+    "descricao": "",
+    "valor_obtido": 1371876.0,
+    "valor_esperado": "= 1371876",
+    "aprovado": true
+  },
+  {
+    "nome": "quarentena apenas pedidos inexistentes",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "vinculos e flags das avaliacoes",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "SAC sem vinculos fabricados",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "pedidos diretos da origem LEGADO",
+    "descricao": "",
+    "valor_obtido": 130000.0,
+    "valor_esperado": "= 130000",
+    "aprovado": true
+  },
+  {
+    "nome": "reconciliacao financeira LEGADO",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "[0, 0.001]",
+    "aprovado": true
+  },
+  {
+    "nome": "itens carregados mais quarentena LEGADO",
+    "descricao": "",
+    "valor_obtido": 397086.0,
+    "valor_esperado": "= 397086",
+    "aprovado": true
+  },
+  {
+    "nome": "pedidos diretos da origem ECOM",
+    "descricao": "",
+    "valor_obtido": 280000.0,
+    "valor_esperado": "= 280000",
+    "aprovado": true
+  },
+  {
+    "nome": "reconciliacao financeira ECOM",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "[0, 0.001]",
+    "aprovado": true
+  },
+  {
+    "nome": "itens carregados mais quarentena ECOM",
+    "descricao": "",
+    "valor_obtido": 995367.0,
+    "valor_esperado": "= 995367",
+    "aprovado": true
+  }
+]

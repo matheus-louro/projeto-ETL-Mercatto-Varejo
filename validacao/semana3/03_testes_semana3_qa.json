@@ -1,0 +1,44 @@
+[
+  {
+    "nome": "teste altera pedidos futuros",
+    "descricao": "",
+    "valor_obtido": 68406.0,
+    "valor_esperado": ">= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "teste altera avaliacoes futuras",
+    "descricao": "",
+    "valor_obtido": 26736.0,
+    "valor_esperado": ">= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "teste altera atendimentos futuros",
+    "descricao": "",
+    "valor_obtido": 15721.0,
+    "valor_esperado": ">= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "atributos invariantes a alteracoes no futuro",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "pedido sem cliente bloqueia publicacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "bloqueio preserva os fatos existentes",
+    "descricao": "",
+    "valor_obtido": 410000.0,
+    "valor_esperado": "= 410000",
+    "aprovado": true
+  }
+]

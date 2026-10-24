@@ -1,0 +1,464 @@
+[
+  {
+    "nome": "mesmo conjunto de tabelas",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sequencias preservadas",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas abt.recompra_90d",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 abt.recompra_90d",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas abt.recompra_90d",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes abt.recompra_90d",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas aud.atendimentos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 aud.atendimentos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas aud.atendimentos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes aud.atendimentos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas aud.avaliacoes",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 aud.avaliacoes",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas aud.avaliacoes",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes aud.avaliacoes",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas aud.itens_quarentena",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 aud.itens_quarentena",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas aud.itens_quarentena",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes aud.itens_quarentena",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas aud.map_item",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 aud.map_item",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas aud.map_item",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes aud.map_item",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas aud.pedidos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 aud.pedidos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas aud.pedidos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes aud.pedidos",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas aud.reconciliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 aud.reconciliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas aud.reconciliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes aud.reconciliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.dim_canal",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.dim_canal",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.dim_canal",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.dim_canal",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.dim_cliente",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.dim_cliente",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.dim_cliente",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.dim_cliente",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.dim_produto",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.dim_produto",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.dim_produto",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.dim_produto",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.dim_status",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.dim_status",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.dim_status",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.dim_status",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.dim_tempo",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.dim_tempo",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.dim_tempo",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.dim_tempo",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.fato_atendimento",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.fato_atendimento",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.fato_atendimento",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.fato_atendimento",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.fato_avaliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.fato_avaliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.fato_avaliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.fato_avaliacao",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.fato_item_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.fato_item_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.fato_item_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.fato_item_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "linhas dw.fato_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "sha256 dw.fato_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "colunas dw.fato_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  },
+  {
+    "nome": "restricoes dw.fato_pedido",
+    "descricao": "",
+    "valor_obtido": 1.0,
+    "valor_esperado": "= True",
+    "aprovado": true
+  }
+]

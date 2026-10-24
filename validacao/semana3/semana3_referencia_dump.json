@@ -1,0 +1,1316 @@
+{
+  "dw.dim_canal": {
+    "linhas": 6,
+    "sha256": "32a09de9d0d1bb920e58e8f45c083d2a5ba3906b254bf9f8414f3ce23a3b8656",
+    "colunas": [
+      [
+        "canal_sk",
+        "INTEGER",
+        false,
+        "nextval('dw.dim_canal_canal_sk_seq'::regclass)"
+      ],
+      [
+        "canal_origem",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "canal_conformado",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "sistema",
+        "TEXT",
+        false,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (canal_sk)"
+    ]
+  },
+  "dw.dim_cliente": {
+    "linhas": 118215,
+    "sha256": "554b0ed297a91c14bd49a352b7e52483d3a0e1e5c78cfc63e8f2071b0c73dbfd",
+    "colunas": [
+      [
+        "cliente_sk",
+        "BIGINT",
+        false,
+        "nextval('dw.dim_cliente_cliente_sk_seq'::regclass)"
+      ],
+      [
+        "cpf_normalizado",
+        "CHAR(11)",
+        true,
+        null
+      ],
+      [
+        "cpf_valido",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "nome_padronizado",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "cidade",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "uf",
+        "CHAR(2)",
+        true,
+        null
+      ],
+      [
+        "dt_primeiro_cadastro",
+        "DATE",
+        true,
+        null
+      ],
+      [
+        "id_legado",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "id_ecommerce",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "origem_unificacao",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "regra_pareamento",
+        "TEXT",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "CHECK ((origem_unificacao = ANY (ARRAY['LEGADO'::text, 'ECOM'::text, 'AMBOS'::text])))",
+      "PRIMARY KEY (cliente_sk)"
+    ]
+  },
+  "dw.dim_produto": {
+    "linhas": 15000,
+    "sha256": "1eac4dbdbbca72bd461808580e91924b6e9def14b49ca361bc7a127963fc7100",
+    "colunas": [
+      [
+        "produto_sk",
+        "BIGINT",
+        false,
+        "nextval('dw.dim_produto_produto_sk_seq'::regclass)"
+      ],
+      [
+        "sku",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "descricao",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "categoria_nivel1",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "categoria_nivel2",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "categoria_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "preco_referencia",
+        "NUMERIC(12, 2)",
+        true,
+        null
+      ],
+      [
+        "ativo",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "id_legado",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "id_ecommerce",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "origem",
+        "TEXT",
+        false,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (produto_sk)"
+    ]
+  },
+  "dw.dim_status": {
+    "linhas": 9,
+    "sha256": "2966dd2ffb059d97a9d7bfa27d057de6246768209ed1cab3604656e3673de36c",
+    "colunas": [
+      [
+        "status_sk",
+        "INTEGER",
+        false,
+        "nextval('dw.dim_status_status_sk_seq'::regclass)"
+      ],
+      [
+        "status_origem",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "sistema",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "status_conformado",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "motivo_cancelamento",
+        "TEXT",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (status_sk)",
+      "UNIQUE (status_origem, sistema)"
+    ]
+  },
+  "dw.dim_tempo": {
+    "linhas": 1217,
+    "sha256": "2f5e750b3a925f64709a80a19dd006acdeeb027bd7cb0c87e8a9e4cdc12ee5cb",
+    "colunas": [
+      [
+        "data_sk",
+        "DATE",
+        false,
+        null
+      ],
+      [
+        "ano",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "trimestre",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "mes",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "dia",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "dia_semana",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "nome_mes",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "eh_fim_semana",
+        "BOOLEAN",
+        false,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (data_sk)"
+    ]
+  },
+  "dw.fato_atendimento": {
+    "linhas": 95000,
+    "sha256": "061dcc027782fde10a495138eb67adf8dd45463add13c5b78b9a850b6ff6187b",
+    "colunas": [
+      [
+        "atendimento_sk",
+        "BIGINT",
+        false,
+        "nextval('dw.fato_atendimento_atendimento_sk_seq'::regclass)"
+      ],
+      [
+        "protocolo",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "cliente_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "pedido_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "data_abertura_sk",
+        "DATE",
+        false,
+        null
+      ],
+      [
+        "data_fechamento_sk",
+        "DATE",
+        true,
+        null
+      ],
+      [
+        "canal",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "motivo_conformado",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "nota_satisfacao",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "horas_resolucao",
+        "NUMERIC(10, 2)",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "FOREIGN KEY (cliente_sk) REFERENCES dw.dim_cliente(cliente_sk)",
+      "FOREIGN KEY (data_abertura_sk) REFERENCES dw.dim_tempo(data_sk)",
+      "FOREIGN KEY (data_fechamento_sk) REFERENCES dw.dim_tempo(data_sk)",
+      "FOREIGN KEY (pedido_sk) REFERENCES dw.fato_pedido(pedido_sk)",
+      "PRIMARY KEY (atendimento_sk)",
+      "UNIQUE (protocolo)"
+    ]
+  },
+  "dw.fato_avaliacao": {
+    "linhas": 160000,
+    "sha256": "d0a44e3829ca911bf11abb022ca17de77c8890124c567ac1a56866cdafce181c",
+    "colunas": [
+      [
+        "avaliacao_sk",
+        "BIGINT",
+        false,
+        "nextval('dw.fato_avaliacao_avaliacao_sk_seq'::regclass)"
+      ],
+      [
+        "review_id",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "pedido_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "produto_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "data_sk",
+        "DATE",
+        false,
+        null
+      ],
+      [
+        "nota",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "compra_verificada",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "votos_uteis",
+        "INTEGER",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "FOREIGN KEY (data_sk) REFERENCES dw.dim_tempo(data_sk)",
+      "FOREIGN KEY (pedido_sk) REFERENCES dw.fato_pedido(pedido_sk)",
+      "FOREIGN KEY (produto_sk) REFERENCES dw.dim_produto(produto_sk)",
+      "PRIMARY KEY (avaliacao_sk)",
+      "UNIQUE (review_id)"
+    ]
+  },
+  "dw.fato_item_pedido": {
+    "linhas": 1371876,
+    "sha256": "de22a7c3547fb504c6e93b70fc73b2568e5da4c520dcff3a9140fc24d38f99f5",
+    "colunas": [
+      [
+        "item_sk",
+        "BIGINT",
+        false,
+        "nextval('dw.fato_item_pedido_item_sk_seq'::regclass)"
+      ],
+      [
+        "pedido_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "produto_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "quantidade",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "valor_unitario",
+        "NUMERIC(12, 2)",
+        false,
+        null
+      ],
+      [
+        "valor_desconto",
+        "NUMERIC(12, 2)",
+        false,
+        null
+      ],
+      [
+        "valor_linha",
+        "NUMERIC(12, 2)",
+        false,
+        null
+      ]
+    ],
+    "restricoes": [
+      "FOREIGN KEY (pedido_sk) REFERENCES dw.fato_pedido(pedido_sk)",
+      "FOREIGN KEY (produto_sk) REFERENCES dw.dim_produto(produto_sk)",
+      "PRIMARY KEY (item_sk)"
+    ]
+  },
+  "dw.fato_pedido": {
+    "linhas": 410000,
+    "sha256": "1c55d2b2eafbe1d703c3785d6606fbedf01541b77ec8f36456f45a2a53bf31bd",
+    "colunas": [
+      [
+        "pedido_sk",
+        "BIGINT",
+        false,
+        "nextval('dw.fato_pedido_pedido_sk_seq'::regclass)"
+      ],
+      [
+        "id_origem",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "sistema_origem",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "cliente_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "data_pedido_sk",
+        "DATE",
+        false,
+        null
+      ],
+      [
+        "data_entrega_sk",
+        "DATE",
+        true,
+        null
+      ],
+      [
+        "canal_sk",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "status_sk",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "qtd_itens",
+        "INTEGER",
+        false,
+        null
+      ],
+      [
+        "valor_mercadoria",
+        "NUMERIC(12, 2)",
+        false,
+        null
+      ],
+      [
+        "valor_frete",
+        "NUMERIC(12, 2)",
+        false,
+        null
+      ],
+      [
+        "valor_desconto",
+        "NUMERIC(12, 2)",
+        false,
+        null
+      ],
+      [
+        "valor_total",
+        "NUMERIC(12, 2)",
+        false,
+        null
+      ],
+      [
+        "dias_entrega",
+        "INTEGER",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "FOREIGN KEY (canal_sk) REFERENCES dw.dim_canal(canal_sk)",
+      "FOREIGN KEY (cliente_sk) REFERENCES dw.dim_cliente(cliente_sk)",
+      "FOREIGN KEY (data_entrega_sk) REFERENCES dw.dim_tempo(data_sk)",
+      "FOREIGN KEY (data_pedido_sk) REFERENCES dw.dim_tempo(data_sk)",
+      "FOREIGN KEY (status_sk) REFERENCES dw.dim_status(status_sk)",
+      "PRIMARY KEY (pedido_sk)",
+      "UNIQUE (id_origem, sistema_origem)"
+    ]
+  },
+  "abt.recompra_90d": {
+    "linhas": 110195,
+    "sha256": "86640ec2aaec0d208e4cd5cbcf33d7755f46b1de971378fb8e9636fc46626bae",
+    "colunas": [
+      [
+        "cliente_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "data_corte",
+        "DATE",
+        false,
+        null
+      ],
+      [
+        "alvo_recompra_90d",
+        "SMALLINT",
+        false,
+        null
+      ],
+      [
+        "recencia_dias",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "frequencia_pedidos",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "valor_monetario_total",
+        "NUMERIC(20, 2)",
+        true,
+        null
+      ],
+      [
+        "ticket_medio",
+        "NUMERIC(20, 4)",
+        true,
+        null
+      ],
+      [
+        "tempo_como_cliente",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "qtd_atendimentos_sac",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "qtd_avaliacoes_consistentes",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "nota_media_avaliacoes",
+        "NUMERIC(10, 4)",
+        true,
+        null
+      ],
+      [
+        "sem_nota_avaliacao",
+        "BOOLEAN",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "CHECK ((alvo_recompra_90d = ANY (ARRAY[0, 1])))",
+      "FOREIGN KEY (cliente_sk) REFERENCES dw.dim_cliente(cliente_sk)",
+      "PRIMARY KEY (cliente_sk, data_corte)"
+    ]
+  },
+  "aud.atendimentos": {
+    "linhas": 95000,
+    "sha256": "d691e1dfec97ed97d8de880ddc4d71038e6c1e93ed7828ad25be94de68a20ee8",
+    "colunas": [
+      [
+        "atendimento_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "pedido_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "protocolo",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "_linha_origem",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "id_pedido_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "cliente_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "cpf_normalizado",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "data_abertura",
+        "DATE",
+        true,
+        null
+      ],
+      [
+        "data_fechamento",
+        "DATE",
+        true,
+        null
+      ],
+      [
+        "sem_encerramento_registrado",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "fechamento_inconsistente",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "canal",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "motivo_conformado",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "nota_satisfacao",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "nota_invalida",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "horas_resolucao",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "tempo_resolucao_invalido",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "cpf_confere_com_cliente_pedido",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "pedido_nao_encontrado",
+        "BOOLEAN",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (atendimento_sk)"
+    ]
+  },
+  "aud.avaliacoes": {
+    "linhas": 160000,
+    "sha256": "2ee19db5da34ebf5c9c2e2609c9ace15b32e386b0a565b96097062f2d372189e",
+    "colunas": [
+      [
+        "avaliacao_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "pedido_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "review_id",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "_linha_origem",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "order_ref",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "product_sku",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "cliente_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "produto_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "data_avaliacao",
+        "DATE",
+        true,
+        null
+      ],
+      [
+        "data_avaliacao_utc",
+        "TIMESTAMP",
+        true,
+        null
+      ],
+      [
+        "raw_horario",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "fuso_assumido",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "produto_consta_no_pedido",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "rating_ausente",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "rating_nulo",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "tipo_rating_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "pedido_nao_encontrado",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "produto_nao_encontrado",
+        "BOOLEAN",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (avaliacao_sk)"
+    ]
+  },
+  "aud.itens_quarentena": {
+    "linhas": 20577,
+    "sha256": "b0c6f284044e87a89cc567c2f794610e0383e2a13e40a84b41c10a9891e8feee",
+    "colunas": [
+      [
+        "id_item_origem",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "id_pedido_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "id_produto_origem",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "sistema_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "quantidade",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "valor_unitario",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "valor_desconto",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "valor_bruto",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "valor_liquido",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "desconto_nao_informado",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "motivo",
+        "TEXT",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (id_item_origem)"
+    ]
+  },
+  "aud.map_item": {
+    "linhas": 1371876,
+    "sha256": "cd879b5ce0107e517ed256a565f06c69eae06b4bb763cfb0a3255c9760427937",
+    "colunas": [
+      [
+        "item_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "id_item_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "sistema_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "pedido_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "produto_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "desconto_nao_informado",
+        "BOOLEAN",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (item_sk)"
+    ]
+  },
+  "aud.pedidos": {
+    "linhas": 410000,
+    "sha256": "331c7115277301782985e3ca6cdf0955822d86acce6a169420466a20514ac93a",
+    "colunas": [
+      [
+        "pedido_sk",
+        "BIGINT",
+        false,
+        null
+      ],
+      [
+        "id_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "sistema_origem",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "cliente_origem_id",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "data_pedido",
+        "TIMESTAMP",
+        true,
+        null
+      ],
+      [
+        "data_entrega",
+        "TIMESTAMP",
+        true,
+        null
+      ],
+      [
+        "entrega_sentinela",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "canal_origem",
+        "VARCHAR",
+        true,
+        null
+      ],
+      [
+        "status_origem",
+        "VARCHAR",
+        true,
+        null
+      ],
+      [
+        "valor_total_origem",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "valor_frete",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "cliente_sk",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "status_sk",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "status_conformado",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "qtd_itens",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "valor_mercadoria",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "valor_desconto",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "valor_total",
+        "NUMERIC(16, 2)",
+        true,
+        null
+      ],
+      [
+        "entrega_inconsistente",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "entrega_sem_data",
+        "BOOLEAN",
+        true,
+        null
+      ],
+      [
+        "dias_entrega",
+        "INTEGER",
+        true,
+        null
+      ],
+      [
+        "data_pedido_local",
+        "DATE",
+        true,
+        null
+      ],
+      [
+        "data_entrega_local",
+        "DATE",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (pedido_sk)"
+    ]
+  },
+  "aud.reconciliacao": {
+    "linhas": 2,
+    "sha256": "f65db5cb92407bbda9dca97758c269772388163f7c954c7527ad812ee4074f20",
+    "colunas": [
+      [
+        "sistema",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "pedidos_origem",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "pedidos_dw",
+        "BIGINT",
+        true,
+        null
+      ],
+      [
+        "total_origem",
+        "NUMERIC(20, 2)",
+        true,
+        null
+      ],
+      [
+        "total_dw",
+        "NUMERIC(20, 2)",
+        true,
+        null
+      ],
+      [
+        "desvio_relativo",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "tolerancia",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "consulta_origem",
+        "TEXT",
+        true,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (sistema)"
+    ]
+  },
+  "qa.execucao_assercao": {
+    "linhas": 390,
+    "sha256": "f4982c295c79bf0ec9b05b0687d5da90519104abd2bb0f07d85a0a741d467e72",
+    "colunas": [
+      [
+        "id",
+        "BIGINT",
+        false,
+        "nextval('qa.execucao_assercao_id_seq'::regclass)"
+      ],
+      [
+        "executado_em",
+        "TIMESTAMP",
+        false,
+        "now()"
+      ],
+      [
+        "etapa",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "nome",
+        "TEXT",
+        false,
+        null
+      ],
+      [
+        "descricao",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "valor_obtido",
+        "NUMERIC",
+        true,
+        null
+      ],
+      [
+        "valor_esperado",
+        "TEXT",
+        true,
+        null
+      ],
+      [
+        "aprovado",
+        "BOOLEAN",
+        false,
+        null
+      ]
+    ],
+    "restricoes": [
+      "PRIMARY KEY (id)"
+    ]
+  },
+  "_sequencias": [
+    [
+      "dw",
+      "dim_canal_canal_sk_seq",
+      6
+    ],
+    [
+      "dw",
+      "dim_cliente_cliente_sk_seq",
+      118215
+    ],
+    [
+      "dw",
+      "dim_produto_produto_sk_seq",
+      15000
+    ],
+    [
+      "dw",
+      "dim_status_status_sk_seq",
+      9
+    ],
+    [
+      "dw",
+      "fato_atendimento_atendimento_sk_seq",
+      95000
+    ],
+    [
+      "dw",
+      "fato_avaliacao_avaliacao_sk_seq",
+      160000
+    ],
+    [
+      "dw",
+      "fato_item_pedido_item_sk_seq",
+      1371876
+    ],
+    [
+      "dw",
+      "fato_pedido_pedido_sk_seq",
+      410000
+    ]
+  ]
+}
