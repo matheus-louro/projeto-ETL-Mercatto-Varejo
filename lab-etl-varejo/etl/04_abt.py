@@ -54,6 +54,58 @@ def consulta():
     """
 
 
+def consulta_vazamento():
+    return f"""
+    WITH historico_correto AS (
+        SELECT * FROM dw.fato_pedido WHERE data_pedido_sk<=DATE '{DATA_CORTE}'
+    ), historico_inteiro AS (
+        SELECT * FROM dw.fato_pedido
+    ), pedidos_corretos AS (
+        SELECT cliente_sk,
+            sum(valor_total)::numeric(20,2) valor_monetario_bruto,
+            avg(valor_total)::numeric(20,4) ticket_medio,
+            DATE '{DATA_CORTE}'-min(data_pedido_sk) tempo_como_cliente
+        FROM historico_correto GROUP BY cliente_sk
+    ), stats_valor AS (
+        SELECT avg(valor_monetario_bruto) media_vl, stddev_pop(valor_monetario_bruto) desvio_vl
+        FROM pedidos_corretos
+    ), pedidos_vazados AS (
+        SELECT cliente_sk,
+            DATE '{DATA_CORTE}'-max(data_pedido_sk) recencia_dias,
+            count(*)::int frequencia_pedidos
+        FROM historico_inteiro GROUP BY cliente_sk
+    ), sac AS (
+        SELECT p.cliente_sk,count(*)::int n FROM dw.fato_atendimento s
+        JOIN historico_correto p USING(pedido_sk)
+        WHERE s.data_abertura_sk<=DATE '{DATA_CORTE}' AND s.data_abertura_sk>=p.data_pedido_sk
+        GROUP BY p.cliente_sk
+    ), avaliacoes AS (
+        SELECT p.cliente_sk,count(*)::int n,avg(a.nota)::numeric(10,4) media
+        FROM dw.fato_avaliacao a JOIN historico_correto p USING(pedido_sk)
+        JOIN aud.avaliacoes v USING(avaliacao_sk)
+        WHERE a.data_sk<=DATE '{DATA_CORTE}' AND a.data_sk>=p.data_pedido_sk
+          AND v.produto_consta_no_pedido
+        GROUP BY p.cliente_sk
+    ), alvo AS (
+        SELECT DISTINCT p.cliente_sk FROM dw.fato_pedido p JOIN dw.dim_status s USING(status_sk)
+        WHERE p.data_pedido_sk>DATE '{DATA_CORTE}' AND p.data_pedido_sk<=DATE '{DATA_FIM_ALVO}'
+          AND s.status_conformado<>'CANCELADO'
+    )
+    SELECT p.cliente_sk,DATE '{DATA_CORTE}' data_corte,
+        (CASE WHEN alvo.cliente_sk IS NULL THEN 0 ELSE 1 END)::smallint alvo_recompra_90d,
+        pv.recencia_dias,pv.frequencia_pedidos,
+        round((p.valor_monetario_bruto - s_vl.media_vl) / nullif(s_vl.desvio_vl, 0), 4)::numeric(20,4) valor_monetario_total,
+        p.ticket_medio,p.tempo_como_cliente,
+        coalesce(s.n,0)::int qtd_atendimentos_sac,coalesce(a.n,0)::int qtd_avaliacoes_consistentes,
+        a.media nota_media_avaliacoes,(a.media IS NULL) sem_nota_avaliacao
+    FROM pedidos_corretos p
+    CROSS JOIN stats_valor s_vl
+    JOIN pedidos_vazados pv USING(cliente_sk)
+    LEFT JOIN sac s USING(cliente_sk) LEFT JOIN avaliacoes a USING(cliente_sk)
+    LEFT JOIN alvo USING(cliente_sk)
+    """
+
+
 def validar(cx, qa):
     qa.igual('populacao elegivel completa',escalar(cx,'SELECT count(*) FROM abt.recompra_90d'),
         escalar(cx,f"SELECT count(DISTINCT cliente_sk) FROM dw.fato_pedido WHERE data_pedido_sk<=DATE '{DATA_CORTE}'"))
@@ -96,6 +148,28 @@ def validar(cx, qa):
     verifica_fks(cx,qa,('abt',))
 
 
+def validar_vazamento(cx, qa):
+    qa.igual('populacao elegivel completa vazamento', escalar(cx, 'SELECT count(*) FROM abt.recompra_90d_vazamento'),
+        escalar(cx, f"SELECT count(DISTINCT cliente_sk) FROM dw.fato_pedido WHERE data_pedido_sk<=DATE '{DATA_CORTE}'"))
+    verifica_sql(qa, cx, 'ABT vazamento grao cliente e corte', '''SELECT count(*) FROM
+        (SELECT cliente_sk,data_corte FROM abt.recompra_90d_vazamento GROUP BY 1,2 HAVING count(*)<>1) x''')
+    verifica_sql(qa, cx, 'ABT vazamento corte e alvo binario', f"SELECT count(*) FROM abt.recompra_90d_vazamento WHERE data_corte<>DATE '{DATA_CORTE}' OR alvo_recompra_90d NOT IN(0,1)")
+    qa.entre('taxa do alvo vazamento', escalar(cx, 'SELECT avg(alvo_recompra_90d) FROM abt.recompra_90d_vazamento'), 0.02, 0.60)
+    qa.maior_igual('vazamento temporal recencias negativas detectadas',
+        escalar(cx, 'SELECT count(*) FROM abt.recompra_90d_vazamento WHERE recencia_dias < 0'), 1)
+    qa.maior_igual('vazamento temporal frequencias infladas',
+        escalar(cx, """SELECT count(*) FROM abt.recompra_90d_vazamento v
+            JOIN abt.recompra_90d c USING(cliente_sk)
+            WHERE v.frequencia_pedidos > c.frequencia_pedidos"""), 1)
+    qa.entre('vazamento sutil media zscore global',
+        float(escalar(cx, 'SELECT avg(valor_monetario_total) FROM abt.recompra_90d_vazamento')), -0.01, 0.01)
+    qa.entre('vazamento sutil desvio zscore global',
+        float(escalar(cx, 'SELECT stddev_pop(valor_monetario_total) FROM abt.recompra_90d_vazamento')), 0.99, 1.01)
+    qa.igual('ABT vazamento PK e check preservados', escalar(cx, """SELECT count(*) FROM pg_constraint
+        WHERE conrelid='abt.recompra_90d_vazamento'::regclass AND contype IN ('p','c')"""), 2)
+    verifica_fks(cx, qa, ('abt',))
+
+
 def construir(cx, qa):
     for col, tipo in COLUNAS.items():
         cx.execute(text(f'ALTER TABLE abt.recompra_90d ADD COLUMN IF NOT EXISTS {col} {tipo}'))
@@ -105,23 +179,46 @@ def construir(cx, qa):
     validar(cx,qa)
 
 
+def construir_vazamento(cx, qa):
+    cx.execute(text("""
+    CREATE TABLE IF NOT EXISTS abt.recompra_90d_vazamento (
+        cliente_sk BIGINT NOT NULL REFERENCES dw.dim_cliente (cliente_sk),
+        data_corte DATE NOT NULL,
+        alvo_recompra_90d SMALLINT NOT NULL CHECK (alvo_recompra_90d IN (0,1)),
+        PRIMARY KEY (cliente_sk, data_corte)
+    )
+    """))
+    for col, tipo in COLUNAS.items():
+        tipo_efetivo = 'NUMERIC(20,4)' if col == 'valor_monetario_total' else tipo
+        cx.execute(text(f'ALTER TABLE abt.recompra_90d_vazamento ADD COLUMN IF NOT EXISTS {col} {tipo_efetivo}'))
+    cx.execute(text('TRUNCATE abt.recompra_90d_vazamento'))
+    cols = 'cliente_sk,data_corte,alvo_recompra_90d,'+','.join(COLUNAS)
+    cx.execute(text(f'INSERT INTO abt.recompra_90d_vazamento({cols}) '+consulta_vazamento()))
+    validar_vazamento(cx, qa)
+
+
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     grupo=ap.add_mutually_exclusive_group(required=True)
     grupo.add_argument('--correta',action='store_true')
     grupo.add_argument('--vazamento',action='store_true')
     args=ap.parse_args()
-    if args.vazamento:
-        ap.error('Modo --vazamento não implementado. Modo disponível: --correta.')
     engine=eng_dw()
-    executar('04_abt_correta',engine,construir)
+    if args.correta:
+        executar('04_abt_correta',engine,construir)
+        tabela = 'recompra_90d'
+        arquivo_json = 'semana3_abt.json'
+    else:
+        executar('04_abt_vazamento',engine,construir_vazamento)
+        tabela = 'recompra_90d_vazamento'
+        arquivo_json = 'semana4_abt_vazamento.json'
     with engine.connect() as cx:
-        resumo=dict(cx.execute(text('''SELECT count(*) clientes,sum(alvo_recompra_90d) positivos,
+        resumo=dict(cx.execute(text(f'''SELECT count(*) clientes,sum(alvo_recompra_90d) positivos,
             avg(alvo_recompra_90d) taxa_alvo,sum(qtd_atendimentos_sac) atendimentos_elegiveis,
             sum(qtd_avaliacoes_consistentes) avaliacoes_elegiveis,
             count(*) FILTER(WHERE nota_media_avaliacoes IS NULL) clientes_sem_nota
-            FROM abt.recompra_90d''')).mappings().one())
-        salva_json('semana3_abt.json',resumo)
+            FROM abt.{tabela}''')).mappings().one())
+        salva_json(arquivo_json,resumo)
         print(resumo)
 
 

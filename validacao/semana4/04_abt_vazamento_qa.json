@@ -1,0 +1,86 @@
+[
+  {
+    "nome": "populacao elegivel completa vazamento",
+    "descricao": "",
+    "valor_obtido": 110195.0,
+    "valor_esperado": "= 110195",
+    "aprovado": true
+  },
+  {
+    "nome": "ABT vazamento grao cliente e corte",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "ABT vazamento corte e alvo binario",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "taxa do alvo vazamento",
+    "descricao": "",
+    "valor_obtido": 0.2183039157856527,
+    "valor_esperado": "[0.02, 0.6]",
+    "aprovado": true
+  },
+  {
+    "nome": "vazamento temporal recencias negativas detectadas",
+    "descricao": "",
+    "valor_obtido": 47984.0,
+    "valor_esperado": ">= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "vazamento temporal frequencias infladas",
+    "descricao": "",
+    "valor_obtido": 47984.0,
+    "valor_esperado": ">= 1",
+    "aprovado": true
+  },
+  {
+    "nome": "vazamento sutil media zscore global",
+    "descricao": "",
+    "valor_obtido": 4.265166296111439e-08,
+    "valor_esperado": "[-0.01, 0.01]",
+    "aprovado": true
+  },
+  {
+    "nome": "vazamento sutil desvio zscore global",
+    "descricao": "",
+    "valor_obtido": 1.0000000461301763,
+    "valor_esperado": "[0.99, 1.01]",
+    "aprovado": true
+  },
+  {
+    "nome": "ABT vazamento PK e check preservados",
+    "descricao": "",
+    "valor_obtido": 2.0,
+    "valor_esperado": "= 2",
+    "aprovado": true
+  },
+  {
+    "nome": "FK abt.recompra_90d.cliente_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FK abt.recompra_90d_vazamento.cliente_sk",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  },
+  {
+    "nome": "FKs validadas no catalogo",
+    "descricao": "",
+    "valor_obtido": 0.0,
+    "valor_esperado": "= 0",
+    "aprovado": true
+  }
+]

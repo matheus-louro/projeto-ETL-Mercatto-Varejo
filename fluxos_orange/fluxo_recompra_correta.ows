@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scheme version="2.0" title="ETL Mercatto - Recompra Versão Correta">
+	<nodes>
+		<node id="0" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" x="120" y="180" version="" title="File (Correta)">
+			<properties format="pickle">
+				(dp1
+				S'recent_files'
+				p2
+				(lp3
+				S'saida/abt_recompra_correta.csv'
+				p4
+				as.
+			</properties>
+		</node>
+		<node id="1" name="Data Sampler" qualified_name="Orange.widgets.data.owsampler.OWDataSampler" project_name="Orange3" x="300" y="180" version="" title="Data Sampler (70/30 Estratificado)" />
+		<node id="2" name="Naive Bayes" qualified_name="Orange.widgets.model.ownaivebayes.OWNaiveBayes" project_name="Orange3" x="480" y="80" version="" title="Naive Bayes" />
+		<node id="3" name="Logistic Regression" qualified_name="Orange.widgets.model.owlogisticregression.OWLogisticRegression" project_name="Orange3" x="480" y="180" version="" title="Logistic Regression" />
+		<node id="4" name="Tree" qualified_name="Orange.widgets.model.owtree.OWTree" project_name="Orange3" x="480" y="280" version="" title="Tree" />
+		<node id="5" name="Test &amp; Score" qualified_name="Orange.widgets.evaluate.owtestandscore.OWTestAndScore" project_name="Orange3" x="680" y="180" version="" title="Test &amp; Score" />
+		<node id="6" name="Confusion Matrix" qualified_name="Orange.widgets.evaluate.owconfusionmatrix.OWConfusionMatrix" project_name="Orange3" x="880" y="120" version="" title="Confusion Matrix" />
+		<node id="7" name="ROC Analysis" qualified_name="Orange.widgets.evaluate.owrocanalysis.OWROCAnalysis" project_name="Orange3" x="880" y="240" version="" title="ROC Analysis" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Data" sink_channel="Data" enabled="true" />
+		<link id="1" source_node_id="1" sink_node_id="5" source_channel="Data Sample" sink_channel="Data" enabled="true" />
+		<link id="2" source_node_id="1" sink_node_id="5" source_channel="Remaining Data" sink_channel="Test Data" enabled="true" />
+		<link id="3" source_node_id="2" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" />
+		<link id="4" source_node_id="3" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" />
+		<link id="5" source_node_id="4" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" />
+		<link id="6" source_node_id="5" sink_node_id="6" source_channel="Evaluation Results" sink_channel="Evaluation Results" enabled="true" />
+		<link id="7" source_node_id="5" sink_node_id="7" source_channel="Evaluation Results" sink_channel="Evaluation Results" enabled="true" />
+	</links>
+</scheme>

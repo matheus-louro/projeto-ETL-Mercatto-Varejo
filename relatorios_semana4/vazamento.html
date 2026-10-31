@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Relatorio_Experimento_Vazamento</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1
+id="relatório-de-resultados-do-experimento-de-vazamento-de-dados">Relatório
+de Resultados do Experimento de Vazamento de Dados</h1>
+<p><strong>Mineração de Dados · Engenharia de Computação · IFMT —
+2026/2</strong><br />
+<strong>Projeto Prático de ETL — Mercatto Varejo</strong><br />
+<strong>Equipe:</strong> Matheus Henrique Moreira Louro e Lucas Ribeiro
+Luchesi<br />
+<strong>Ambiente:</strong> Docker, Escala 1.0, Semente
+<code>20262</code></p>
+<hr />
+<h2 id="desenho-experimental-e-protocolo-de-avaliação">1. Desenho
+Experimental e Protocolo de Avaliação</h2>
+<p>O presente experimento tem como objetivo reproduzir deliberadamente,
+mensurar e diagnosticar o fenômeno do <strong>vazamento de dados
+(<em>data leakage</em>)</strong> na construção da Tabela-Base de Análise
+(ABT) para previsão de recompra de clientes da <em>Mercatto Comércio
+S.A.</em></p>
+<p>A pergunta preditiva formulada pela diretoria da varejista estabelece
+o seguinte contrato analítico: &gt; <em>“Dado o comportamento de compra
+do cliente até 30 de junho de 2025, ele realizará ao menos uma nova
+compra entre 1º de julho e 28 de setembro de 2025?”</em></p>
+<p>Para responder a esta indagação e avaliar o impacto de contaminações
+metodológicas e temporais, foram construídas duas versões da ABT sobre a
+mesma população elegível de <strong>110.195 clientes</strong> (aqueles
+com histórico prévio até a data de corte):</p>
+<ol type="1">
+<li><strong>Versão Correta (<code>abt.recompra_90d</code>):</strong>
+Todos os atributos preditivos calculados utilizando estritamente
+transações, chamados de SAC e avaliações ocorridos até
+<strong>30/06/2025</strong>. O alvo binário
+(<code>alvo_recompra_90d</code>) reflete as recompras líquidas não
+canceladas realizadas entre 01/07/2025 e 28/09/2025 (taxa positiva de
+<strong>21,83%</strong>; 24.056 clientes).</li>
+<li><strong>Versão com Vazamento
+(<code>abt.recompra_90d_vazamento</code>):</strong>
+<ul>
+<li><strong>Vazamento Temporal Óbvio:</strong> Os atributos
+<code>recencia_dias</code> e <code>frequencia_pedidos</code> foram
+calculados sobre o histórico completo de pedidos do banco (estendendo-se
+além de 30/06/2025), simulando a omissão da cláusula de filtro temporal
+no pipeline.</li>
+<li><strong>Vazamento Metodológico Sutil:</strong> O atributo contínuo
+<code>valor_monetario_total</code> foi submetido a padronização global
+(<em>Z-score</em> univariado: <span
+class="math inline"><em>μ</em> = 0, <em>σ</em> = 1</span>) sobre todos
+os 110.195 registros da tabela analítica <strong>antes</strong> da
+partição em conjuntos de treino e teste.</li>
+</ul></li>
+</ol>
+<p>Ambas as versões foram exportadas pelo pipeline
+(<code>05_exportar_orange.py</code>) em formato CSV compatível com o
+Orange Data Mining, com cabeçalhos triplos padronizados declarando
+metadados, tipos contínuos/discretos e papéis (<code>meta</code>,
+<code>class</code> e preditores).</p>
+<p>O protocolo experimental adotou amostragem estratificada 70/30
+(77.136 instâncias para treinamento e 33.059 para teste) sob a mesma
+semente aleatória (<code>random_state=42</code>), avaliando três
+algoritmos de aprendizado supervisionado: * <strong>Naive Bayes</strong>
+(GaussianNB com priores empíricas) * <strong>Regressão
+Logística</strong> (regularização L2, solver L-BFGS, tolerância <span
+class="math inline">10<sup>−4</sup></span>) * <strong>Árvore de
+Decisão</strong> (critério Gini, profundidade máxima = 5)</p>
+<hr />
+<h2
+id="resposta-à-pergunta-a-diferença-de-desempenho-entre-as-versões">2.
+Resposta à Pergunta (a) — Diferença de Desempenho entre as Versões</h2>
+<p>A Tabela 1 sintetiza o desempenho preditivo obtido no conjunto de
+teste independente (33.059 clientes; 7.217 positivos e 25.842 negativos)
+para as duas versões da base.</p>
+<h3
+id="tabela-1-comparativo-de-métricas-no-conjunto-de-teste-70-treino-30-teste-estratificado">Tabela
+1: Comparativo de Métricas no Conjunto de Teste (70% Treino / 30% Teste
+Estratificado)</h3>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Algoritmo</th>
+<th>Versão</th>
+<th style="text-align: center;">AUC-ROC</th>
+<th style="text-align: center;">Acurácia Balanceada</th>
+<th style="text-align: center;">F1-Score</th>
+<th style="text-align: center;">Precisão</th>
+<th style="text-align: center;">Revocação</th>
+<th style="text-align: center;">Matriz de Confusão [TN, FP / FN,
+TP]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Naive Bayes</strong></td>
+<td>Correta</td>
+<td style="text-align: center;">0,5359</td>
+<td style="text-align: center;">0,5085</td>
+<td style="text-align: center;">0,0754</td>
+<td style="text-align: center;">0,3163</td>
+<td style="text-align: center;">0,0428</td>
+<td style="text-align: center;">[25.174, 668 / 6.908, 309]</td>
+</tr>
+<tr class="even">
+<td></td>
+<td><strong>Com Vazamento</strong></td>
+<td style="text-align: center;"><strong>0,8883</strong></td>
+<td style="text-align: center;"><strong>0,7594</strong></td>
+<td style="text-align: center;"><strong>0,6101</strong></td>
+<td style="text-align: center;"><strong>0,5687</strong></td>
+<td style="text-align: center;"><strong>0,6582</strong></td>
+<td style="text-align: center;">[22.239, 3.603 / 2.467, 4.750]</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><em>Variação (<span class="math inline"><em>Δ</em></span>)</em></td>
+<td style="text-align: center;"><em>+0,3524</em></td>
+<td style="text-align: center;"><em>+0,2509</em></td>
+<td style="text-align: center;"><em>+0,5347</em></td>
+<td style="text-align: center;"><em>+0,2524</em></td>
+<td style="text-align: center;"><em>+0,6154</em></td>
+<td style="text-align: center;"><em>Redução massiva de FN
+(-64%)</em></td>
+</tr>
+<tr class="even">
+<td><strong>Regressão Logística</strong></td>
+<td>Correta</td>
+<td style="text-align: center;">0,5345</td>
+<td style="text-align: center;">0,5000</td>
+<td style="text-align: center;">0,0000</td>
+<td style="text-align: center;">0,0000</td>
+<td style="text-align: center;">0,0000</td>
+<td style="text-align: center;">[25.842, 0 / 7.217, 0]</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><strong>Com Vazamento</strong></td>
+<td style="text-align: center;"><strong>0,8435</strong></td>
+<td style="text-align: center;"><strong>0,6382</strong></td>
+<td style="text-align: center;"><strong>0,4338</strong></td>
+<td style="text-align: center;"><strong>0,5840</strong></td>
+<td style="text-align: center;"><strong>0,3450</strong></td>
+<td style="text-align: center;">[24.068, 1.774 / 4.727, 2.490]</td>
+</tr>
+<tr class="even">
+<td></td>
+<td><em>Variação (<span class="math inline"><em>Δ</em></span>)</em></td>
+<td style="text-align: center;"><em>+0,3090</em></td>
+<td style="text-align: center;"><em>+0,1382</em></td>
+<td style="text-align: center;"><em>+0,4338</em></td>
+<td style="text-align: center;"><em>+0,5840</em></td>
+<td style="text-align: center;"><em>+0,3450</em></td>
+<td style="text-align: center;"><em>Sai da predição trivial
+majoritária</em></td>
+</tr>
+<tr class="odd">
+<td><strong>Árvore de Decisão</strong></td>
+<td>Correta</td>
+<td style="text-align: center;">0,5267</td>
+<td style="text-align: center;">0,4999</td>
+<td style="text-align: center;">0,0006</td>
+<td style="text-align: center;">0,1538</td>
+<td style="text-align: center;">0,0003</td>
+<td style="text-align: center;">[25.831, 11 / 7.215, 2]</td>
+</tr>
+<tr class="even">
+<td></td>
+<td><strong>Com Vazamento</strong></td>
+<td style="text-align: center;"><strong>0,9663</strong></td>
+<td style="text-align: center;"><strong>0,8644</strong></td>
+<td style="text-align: center;"><strong>0,8134</strong></td>
+<td style="text-align: center;"><strong>0,8768</strong></td>
+<td style="text-align: center;"><strong>0,7585</strong></td>
+<td style="text-align: center;">[25.073, 769 / 1.743, 5.474]</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><em>Variação (<span class="math inline"><em>Δ</em></span>)</em></td>
+<td style="text-align: center;"><em>+0,4396</em></td>
+<td style="text-align: center;"><em>+0,3645</em></td>
+<td style="text-align: center;"><em>+0,8128</em></td>
+<td style="text-align: center;"><em>+0,7230</em></td>
+<td style="text-align: center;"><em>+0,7582</em></td>
+<td style="text-align: center;"><em>Verdadeiros Positivos: de 2 para
+5.474!</em></td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img
+src="/home/luchesi/bagunca/projeto-ETL-Mercatto-Varejo/relatorios_semana4/imagens/painel_desempenho_horizontal.png"
+alt="Figura 1: Curvas ROC e Salto Artificial de Desempenho" />
+<figcaption aria-hidden="true">Figura 1: Curvas ROC e Salto Artificial
+de Desempenho</figcaption>
+</figure>
+<hr />
+<h2 id="resposta-à-pergunta-b-o-impacto-numérico-do-vazamento-sutil">3.
+Resposta à Pergunta (b) — O Impacto Numérico do Vazamento Sutil</h2>
+<p>Para responder se a normalização (<em>Z-score</em>) realizada sobre a
+totalidade da base antes da partição produz diferença perceptível,
+executou-se um ensaio controlado isolando exclusivamente essa
+intervenção sobre os dados íntegros no tempo (sem vazamento temporal).
+Os resultados comparativos encontram-se na Tabela 2.</p>
+<h3
+id="tabela-2-efeito-isolado-da-normalização-z-score-global-antes-do-split-de-treinoteste">Tabela
+2: Efeito Isolado da Normalização Z-Score Global (Antes do Split de
+Treino/Teste)</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th style="text-align: center;">Sem Vazamento (Bruto)</th>
+<th style="text-align: center;">Com Vazamento Sutil (Z-score
+Global)</th>
+<th style="text-align: center;">Diferença Numérica (<span
+class="math inline"><em>Δ</em></span>)</th>
+<th style="text-align: center;">Impacto Perceptível?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Naive Bayes (AUC)</strong></td>
+<td style="text-align: center;">0,5359</td>
+<td style="text-align: center;">0,5356</td>
+<td style="text-align: center;">-0,0003</td>
+<td style="text-align: center;">Não perceptível visualmente</td>
+</tr>
+<tr class="even">
+<td><strong>Naive Bayes (BalAcc)</strong></td>
+<td style="text-align: center;">0,5085</td>
+<td style="text-align: center;">0,5068</td>
+<td style="text-align: center;">-0,0017</td>
+<td style="text-align: center;">Variação ínfima (<span
+class="math inline"> ≈ 0, 17%</span>)</td>
+</tr>
+<tr class="odd">
+<td><strong>Naive Bayes (F1-Score)</strong></td>
+<td style="text-align: center;">0,0754</td>
+<td style="text-align: center;">0,0583</td>
+<td style="text-align: center;">-0,0171</td>
+<td style="text-align: center;">Leve sensibilidade de calibração</td>
+</tr>
+<tr class="even">
+<td><strong>Regressão Logística (AUC)</strong></td>
+<td style="text-align: center;">0,5345</td>
+<td style="text-align: center;">0,5345</td>
+<td style="text-align: center;">0,0000</td>
+<td style="text-align: center;">Nula (invariante a escala linear)</td>
+</tr>
+<tr class="odd">
+<td><strong>Árvore de Decisão (AUC)</strong></td>
+<td style="text-align: center;">0,5267</td>
+<td style="text-align: center;">0,5267</td>
+<td style="text-align: center;">0,0000</td>
+<td style="text-align: center;">Nula (invariante a transformações
+monotônicas)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="interpretação-epistêmica">Interpretação Epistêmica:</h3>
+<p>A resposta técnica à pergunta (b) é <strong>não, o vazamento sutil
+não produz uma diferença escandalosa perceptível a olho nu</strong>,
+mantendo a variação de AUC restrita entre <span
+class="math inline">0, 0000</span> e <span
+class="math inline">−0, 0003</span>. Na Árvore de Decisão e na Regressão
+Logística, a normalização univariada não altera a ordenação das divisões
+nem a separabilidade monotônica dos dados.</p>
+<p><strong>Por que esse resultado é didaticamente
+crucial?</strong><br />
+É precisamente essa invisibilidade numérica que torna o vazamento
+metodológico a falha mais letal da engenharia de machine learning. Ao
+contrário do vazamento temporal (que explode o AUC para &gt; 0,90 e
+chama a atenção de qualquer analista atento), a violação de vazamento de
+pré-processamento transfere silenciosamente a média (<span
+class="math inline"><em>μ</em></span>) e a variância (<span
+class="math inline"><em>σ</em></span>) do conjunto de teste para a
+parametrização do treino. Quando o modelo for implantado na esteira de
+produção e receber um novo lote com deslocamento distributivo
+(<em>covariate shift</em>), a inferência falhará sem que nenhuma métrica
+de validação tenha soado o alarme no laboratório.</p>
+<hr />
+<h2
+id="resposta-à-pergunta-c-diagnóstico-e-descoberta-às-cegas-defesa-oral">4.
+Resposta à Pergunta (c) — Diagnóstico e Descoberta às Cegas (Defesa
+Oral)</h2>
+<blockquote>
+<p><strong>Pergunta-Chave da Banca:</strong> <em>“Se você tivesse
+recebido apenas o resultado da versão com vazamento, sem acesso ao
+código SQL de extração ou aos scripts do pipeline, como descobriria
+tecnicamente que esse modelo está errado?”</em></p>
+</blockquote>
+<p>Se um auditor externo recebesse apenas o artefato analítico e o
+modelo treinado com AUC de 0,966, quatro procedimentos investigativos
+revelariam a contaminação de forma irrefutável:</p>
+<h3
+id="auditoria-estatística-univariada-de-domínio-temporal-a-prova-material">1.
+Auditoria Estatística Univariada de Domínio Temporal (A Prova
+Material)</h3>
+<p>Ao inspecionar o sumário descritivo (<em>describe</em>) do atributo
+<code>recencia_dias</code>, o auditor encontraria imediatamente um valor
+mínimo absurdo: <span class="math display">min (recencia_dias) = −89
+dias</span></p>
+<p>Como a recência é contratualmente definida como o tempo decorrido
+entre a última compra do cliente e a data de corte (<span
+class="math inline"><em>t</em><sub>0</sub> = 30/06/2025</span>): <span
+class="math display">recencia_dias = <em>t</em><sub>0</sub> − max (<em>t</em><sub>compra</sub>)</span>
+Um valor negativo implica matematicamente que <span
+class="math inline">max (<em>t</em><sub>compra</sub>) &gt; <em>t</em><sub>0</sub></span>.
+Na base com vazamento, existem exatamente <strong>47.984 clientes (43,5%
+da base)</strong> com recência estritamente menor que zero. A presença
+de recências negativas em relação à data de corte é prova material
+incontestável de violação de causalidade temporal.</p>
+<h3
+id="análise-de-importância-de-variáveis-e-decomposição-de-coeficientes">2.
+Análise de Importância de Variáveis e Decomposição de Coeficientes</h3>
+<p>Ao inspecionar a importância dos preditores na Árvore de Decisão,
+verifica-se que o atributo <code>recencia_dias</code> responde por
+<strong>92,1%</strong> de toda a redução de impureza de Gini do modelo,
+com o atributo <code>frequencia_pedidos</code> absorvendo outros 6,4%.
+Todos os demais sete atributos legítimos (tempo como cliente, ticket
+médio, atendimentos do SAC, nota de avaliações) somam menos de 1,5% de
+contribuição combinada. Uma única variável concentrar mais de 90% da
+capacidade preditiva em um cenário de varejo comportamental indica que o
+atributo não está correlacionado à causa, mas sim codificando a própria
+ocorrência do evento futuro.</p>
+<figure>
+<img
+src="/home/luchesi/bagunca/projeto-ETL-Mercatto-Varejo/relatorios_semana4/imagens/painel_auditoria_horizontal.png"
+alt="Figura 2: Prova Material de Recência Negativa e Hipertrofia na Árvore" />
+<figcaption aria-hidden="true">Figura 2: Prova Material de Recência
+Negativa e Hipertrofia na Árvore</figcaption>
+</figure>
+<h3
+id="validação-fora-do-tempo-out-of-time-backtesting-vs.-partição-randômica">3.
+Validação Fora do Tempo (Out-of-Time / Backtesting) vs. Partição
+Randômica</h3>
+<p>A validação cruzada aleatória (<em>k-fold</em> ou amostragem 70/30)
+perpetua o vazamento porque dados contaminados estão presentes em ambas
+as partições. O auditor realizaria uma <strong>partição cronológica
+estrita (<em>Out-of-Time Validation</em>)</strong>: * Treina o modelo em
+uma janela histórica anterior (<span
+class="math inline"><em>t</em><sub>−1</sub></span>); * Avalia o modelo
+em um lote novo cujos dados futuros ainda não existam. Nesse teste fora
+do tempo, o modelo contaminado sofreria um <strong>colapso catastrófico
+de desempenho</strong>: clientes que recompram não terão recência
+negativa no momento da predição real, fazendo a acurácia cair para o
+nível da predição cega (<span class="math inline"> ≈ 50%</span>).</p>
+<h3 id="correlação-bivariada-próxima-de-extremos-determinísticos">4.
+Correlação Bivariada Próxima de Extremos Determinísticos</h3>
+<p>A correlação de Pearson entre <code>recencia_dias</code> e
+<code>alvo_recompra_90d</code> na versão correta é de apenas <span
+class="math inline">−0, 019</span> (comportamento de baixa
+separabilidade linear). Na versão com vazamento, a correlação salta para
+<span class="math inline">−0, 378</span>, apresentando no primeiro nó de
+decisão da árvore uma regra límpida: <span class="math display">Se
+recencia_dias &lt; 0 ⟹ <em>P</em>(recompra) ≈ 98%</span> Nenhum atributo
+comportamental genuíno em varejo atinge tal grau de determinismo sem que
+haja vazamento da própria classe na sua fórmula geradora.</p>
+<hr />
+<h2 id="conclusão">5. Conclusão</h2>
+<p>O experimento demonstra que construir modelos preditivos de alta
+acurácia aparente é trivial quando se relaxa o rigor temporal do
+pré-processamento. A verdadeira complexidade do processo de mineração
+reside no pipeline de engenharia de dados (ETL): sustentar o grão
+atômico, assegurar que nenhum registro posterior ao ponto de corte
+traspasse para a ABT e documentar formalmente cada decisão nas fichas de
+RDT.</p>
+</body>
+</html>

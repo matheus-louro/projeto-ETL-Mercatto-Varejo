@@ -1,0 +1,8 @@
+{
+  "clientes": 110195,
+  "positivos": 24056,
+  "taxa_alvo": "0.21830391578565270657",
+  "atendimentos_elegiveis": 33015,
+  "avaliacoes_elegiveis": 26,
+  "clientes_sem_nota": 110170
+}

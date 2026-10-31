@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Relatorio_Decisoes_RDT_Final</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1
+id="registro-de-decisões-de-transformação-rdt-documento-integral">Registro
+de Decisões de Transformação (RDT) — Documento Integral</h1>
+<p><strong>Mineração de Dados · Engenharia de Computação · IFMT —
+2026/2</strong><br />
+<strong>Projeto Prático de ETL — Mercatto Varejo</strong><br />
+<strong>Equipe:</strong> Matheus Henrique Moreira Louro e Lucas Ribeiro
+Luchesi<br />
+<strong>Versão do Pipeline:</strong> 1.0.0 (Entrega Final — Semana
+4)<br />
+<strong>Ambiente:</strong> Docker, Escala 1.0, Semente
+<code>20262</code></p>
+<hr />
+<h2 id="apresentação-e-escopo-geral">Apresentação e Escopo Geral</h2>
+<p>Este documento consolida o <strong>Registro de Decisões de
+Transformação (RDT)</strong> integral do Projeto Prático Mercatto
+Varejo, cobrindo as 17 decisões técnicas e conceituais formuladas ao
+longo das quatro semanas de desenvolvimento do pipeline de ETL e
+mineração de dados.</p>
+<p>Seguindo o referencial teórico da disciplina, o RDT documenta
+formalmente não o que o código faz, mas <strong>por que</strong> cada
+transformação foi desenhada, <strong>quais alternativas</strong> foram
+ponderadas, <strong>o que se perdeu</strong> em cada escolha e a
+<strong>quantificação exata</strong> dos registros impactados.</p>
+<p>O documento abrange desde a ingestão completa na camada de staging
+(<code>stg</code>), passando pela conformação semântica
+(<code>cfm</code>), carga atômica do esquema estrela analítico
+(<code>dw</code>), quarentena e rastreabilidade (<code>aud</code>),
+construção da Tabela-Base de Análise correta e com vazamento
+(<code>abt</code>) e o histórico de qualidade (<code>qa</code>).</p>
+<hr />
+<h2 id="rdt-01-carga-completa-e-fidelidade-da-extração">RDT-01 — Carga
+completa e fidelidade da extração</h2>
+<p><strong>Etapa:</strong> <code>01_extracao.py</code>.</p>
+<p><strong>Evidência.</strong> As quatro fontes somam 2.205.864
+registros, incluindo as 21 categorias digitais. Não há uma coluna
+confiável de última atualização em todas as tabelas.
+<code>DT_CADASTRO</code>, <code>created_at</code> e datas de pedidos
+representam eventos, não garantem a captura de alterações posteriores.
+Os arquivos não fornecem contrato de captura de mudanças.</p>
+<p><strong>Alternativas.</strong> (1) Incremental pela data do evento:
+reduz leitura, mas pode omitir atualizações antigas e não cobre tabelas
+sem esse atributo. (2) Comparação de hashes ou captura de mudanças:
+possível com infraestrutura adicional, exige controlar exclusões e
+manter estado. (3) Carga completa em lotes: adotada pela simplicidade
+verificável e volume tratável.</p>
+<p><strong>Decisão e justificativa.</strong> Substituir integralmente
+cada tabela de staging, com gravação transacional por tabela e lotes de
+10.000 registros. Tipos relacionais são refletidos e mapeados para
+equivalentes no PostgreSQL: DECIMAL permanece exato, datas e timestamps
+mantêm seus tipos. O CSV é lido como texto, preservando vazios,
+sentinelas e quebras internas. No NDJSON, nomes e objetos originais
+ficam em colunas JSONB; o registro textual completo também é preservado.
+Omissão de chave, <code>null</code> JSON, número e string continuam
+distinguíveis. Acrescentam-se <code>_fonte</code>,
+<code>_extraido_em</code> e <code>_linha_origem</code>; a última coluna
+é ordinal de registro lógico.</p>
+<p><strong>O que se perde.</strong> A substituição não mantém
+fotografias de execuções anteriores em <code>stg</code>; mudanças
+históricas da origem não podem ser reconstruídas por essa camada. Há
+custo de reler 100% da base. Os valores da fotografia corrente são
+preservados.</p>
+<p><strong>Registros afetados.</strong> 2.205.864 (100% da
+extração):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Tabela / arquivo de origem</th>
+<th style="text-align: right;">Registros</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>CLIENTES</code></td>
+<td style="text-align: right;">47.250</td>
+</tr>
+<tr class="even">
+<td><code>PRODUTOS</code></td>
+<td style="text-align: right;">3.000</td>
+</tr>
+<tr class="odd">
+<td><code>PEDIDOS</code></td>
+<td style="text-align: right;">130.000</td>
+</tr>
+<tr class="even">
+<td><code>ITENS_PEDIDO</code></td>
+<td style="text-align: right;">397.086</td>
+</tr>
+<tr class="odd">
+<td><code>shop.customer</code></td>
+<td style="text-align: right;">85.000</td>
+</tr>
+<tr class="even">
+<td><code>shop.category</code></td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr class="odd">
+<td><code>shop.product</code></td>
+<td style="text-align: right;">12.000</td>
+</tr>
+<tr class="even">
+<td><code>shop.orders</code></td>
+<td style="text-align: right;">280.000</td>
+</tr>
+<tr class="odd">
+<td><code>shop.order_item</code></td>
+<td style="text-align: right;">995.367</td>
+</tr>
+<tr class="even">
+<td>SAC CSV</td>
+<td style="text-align: right;">96.140</td>
+</tr>
+<tr class="odd">
+<td>Avaliações NDJSON</td>
+<td style="text-align: right;">160.000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Asserções associadas.</strong>
+<code>linhas &lt;tabela&gt;</code> compara contagem gravada e lida;
+<code>conteudo fiel &lt;tabela&gt;</code> compara SHA-256 dos valores
+ordenados. <code>JSON distingue omissao null e tipos</code> compara cada
+campo ao documento original. Identificadores de arquivo são verificados
+separadamente. Falhas encerram a execução com código diferente de zero e
+são registradas em <code>qa.execucao_assercao</code>.</p>
+<hr />
+<h2 id="rdt-02-identidade-de-clientes-entre-sistemas">RDT-02 —
+Identidade de clientes entre sistemas</h2>
+<p><strong>Etapa:</strong>
+<code>transformacoes_semana2.unifica_clientes</code>.</p>
+<p><strong>Evidência.</strong> Os 47.250 registros do legado e 85.000 do
+e-commerce compartilham 12.605 CPFs normalizados distintos. Destes,
+1.135 (9,00%) têm dígitos verificadores inválidos. Há 4.423 registros
+sem CPF utilizável no legado (9,36%) e 6.855 no e-commerce (8,06%).
+Nomes repetidos impedem considerar igualdade de nome como prova de
+identidade.</p>
+<p><strong>Alternativas.</strong> (1) Parear apenas CPFs válidos: remove
+identificadores formalmente incorretos, mas perde 1.135 correspondências
+observáveis. (2) Pareamento aproximado por nome, cidade e UF: pode
+recuperar casos sem CPF, mas requer validação de falsos positivos, não
+realizada. (3) CPF exato normalizado, válido ou inválido, mantendo
+separados registros sem CPF: adotada.</p>
+<p><strong>Decisão e justificativa.</strong> Usar os 11 dígitos como
+identificador candidato, manter <code>cpf_valido</code> e registrar o
+método em <code>regra_pareamento</code>. Ausências permanecem isoladas
+por sistema e ID. Igualdade de CPF é uma regra operacional, não
+confirmação independente de pessoa real. IDs internos de sistemas
+diferentes não são usados para parear pessoas por igualdade
+numérica.</p>
+<p><strong>O que se perde.</strong> Pessoas presentes nas duas fontes
+sem CPF comum podem permanecer fragmentadas; sua quantidade real não é
+determinável apenas pelas correspondências observadas. CPFs
+compartilhados podem conter colisões. A validade formal e esse risco não
+são ocultados.</p>
+<p><strong>Registros afetados.</strong> 132.250 registros de origem
+(100%) processados; dimensão resultante com 118.215 linhas:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Origem da identidade</th>
+<th style="text-align: right;">Linhas</th>
+<th style="text-align: right;">% da dimensão</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AMBOS</td>
+<td style="text-align: right;">12.605</td>
+<td style="text-align: right;">10,66%</td>
+</tr>
+<tr class="even">
+<td>LEGADO</td>
+<td style="text-align: right;">33.218</td>
+<td style="text-align: right;">28,10%</td>
+</tr>
+<tr class="odd">
+<td>ECOM</td>
+<td style="text-align: right;">72.392</td>
+<td style="text-align: right;">61,24%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Asserções associadas.</strong>
+<code>cpf sem duplicatas entre validos</code>,
+<code>cpf sem duplicatas entre invalidos</code>,
+<code>origem unificacao</code>, <code>cardinalidade clientes</code> e
+<code>CPF ausente nao foi unificado entre pessoas</code>.</p>
+<hr />
+<h2 id="rdt-03-duplicatas-internas-e-mapeamento-de-todos-os-ids">RDT-03
+— Duplicatas internas e mapeamento de todos os IDs</h2>
+<p><strong>Etapa:</strong>
+<code>transformacoes_semana2.unifica_clientes</code>.</p>
+<p><strong>Evidência.</strong> A normalização encontra 1.427 registros
+excedentes por CPF no legado e três no e-commerce. Os três IDs digitais
+excedentes são referenciados por 14 pedidos. Duplicação por CPF e
+duplicação por nome não são tratadas como o mesmo problema.</p>
+<p><strong>Alternativas.</strong> (1) Excluir excedentes sem mapeamento:
+simplifica a dimensão, mas deixa pedidos sem destino para seus IDs. (2)
+Deduplicar registros sem CPF por similaridade: recupera possíveis
+duplicatas com risco de fusão não validado. (3) Eleger menor ID por CPF
+dentro de cada origem e preservar todos os aliases: adotada.</p>
+<p><strong>Decisão e justificativa.</strong> Todos os IDs ficam em
+<code>cfm.clientes_origem</code> e nos mapas
+<code>cfm.map_cliente_legado</code> e <code>cfm.map_cliente_ecom</code>,
+inclusive duplicatas e ausências. Nos atributos da identidade unificada,
+prioriza-se o cadastro canônico digital quando existe; cidade disponível
+pode vir do legado, e <code>dt_primeiro_cadastro</code> usa a menor data
+registrada no grupo. Nomes são normalizados; cidade <code>N/A</code> não
+é tratada como cidade válida.</p>
+<p><strong>O que se perde.</strong> A dimensão apresenta um único
+conjunto de atributos, suprimindo variações secundárias na visão
+integrada. Atributos e IDs originais continuam acessíveis em
+<code>stg</code> e nos mapas. Duplicatas sem CPF não são removidas por
+suposição de identidade.</p>
+<p><strong>Registros afetados.</strong> 1.427 registros colapsados no
+legado (3,02% de 47.250), resultando em 45.823 identidades dessa origem
+antes da integração. No e-commerce, três (0,0035% de 85.000) são
+colapsados. Os mapas preservam 47.250/47.250 IDs legados e 85.000/85.000
+digitais (100% em cada origem), cobrindo os 410.000 pedidos.</p>
+<p><strong>Asserções associadas.</strong>
+<code>mapa completo clientes legado</code>,
+<code>mapa completo clientes ecommerce</code>,
+<code>pedidos sem mapa de cliente</code> e verificações de unicidade de
+CPF. A cobertura não é limitada aos IDs canônicos.</p>
+<hr />
+<h2 id="rdt-04-conformação-dos-status">RDT-04 — Conformação dos
+status</h2>
+<p><strong>Etapa:</strong>
+<code>transformacoes_semana2.conforma_status</code>.</p>
+<p><strong>Evidência.</strong> O legado agrega cancelamento e recusa de
+pagamento em <code>CANCELADO</code>; a distinção digital é informada
+pelo esqueleto do laboratório. As distribuições medidas são:</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Origem e status</th>
+<th style="text-align: right;">Pedidos</th>
+<th style="text-align: right;">% na origem</th>
+<th>Macrostatus / motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>LEGADO: <code>ENTREGUE</code></td>
+<td style="text-align: right;">101.192</td>
+<td style="text-align: right;">77,84%</td>
+<td>ENTREGUE / não aplicável</td>
+</tr>
+<tr class="even">
+<td>LEGADO: <code>CANCELADO</code></td>
+<td style="text-align: right;">15.774</td>
+<td style="text-align: right;">12,13%</td>
+<td>CANCELADO / desconhecido</td>
+</tr>
+<tr class="odd">
+<td>LEGADO: <code>EM TRANSITO</code></td>
+<td style="text-align: right;">7.798</td>
+<td style="text-align: right;">6,00%</td>
+<td>EM_TRANSITO / não aplicável</td>
+</tr>
+<tr class="even">
+<td>LEGADO: <code>SEPARACAO</code></td>
+<td style="text-align: right;">5.236</td>
+<td style="text-align: right;">4,03%</td>
+<td>SEPARACAO / não aplicável</td>
+</tr>
+<tr class="odd">
+<td>ECOM: <code>delivered</code></td>
+<td style="text-align: right;">207.204</td>
+<td style="text-align: right;">74,00%</td>
+<td>ENTREGUE / não aplicável</td>
+</tr>
+<tr class="even">
+<td>ECOM: <code>canceled</code></td>
+<td style="text-align: right;">22.413</td>
+<td style="text-align: right;">8,00%</td>
+<td>CANCELADO / SOLICITACAO_CLIENTE</td>
+</tr>
+<tr class="odd">
+<td>ECOM: <code>payment_declined</code></td>
+<td style="text-align: right;">13.990</td>
+<td style="text-align: right;">5,00%</td>
+<td>CANCELADO / RECUSA_PAGAMENTO</td>
+</tr>
+<tr class="even">
+<td>ECOM: <code>shipped</code></td>
+<td style="text-align: right;">22.375</td>
+<td style="text-align: right;">7,99%</td>
+<td>EM_TRANSITO / não aplicável</td>
+</tr>
+<tr class="odd">
+<td>ECOM: <code>processing</code></td>
+<td style="text-align: right;">14.018</td>
+<td style="text-align: right;">5,01%</td>
+<td>SEPARACAO / não aplicável</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Alternativas.</strong> (1) Um único CANCELADO, descartando o
+motivo digital. (2) Macrostatus separados para cada motivo, com
+categoria desconhecida no legado. (3) Macrostatus comum e motivo
+secundário: adotada.</p>
+<p><strong>Decisão e justificativa.</strong> <code>dw.dim_status</code>
+mantém status original e sistema, além de <code>status_conformado</code>
+e <code>motivo_cancelamento</code>. O motivo fica NULL no legado; a
+interpretação de <code>canceled</code> segue a convenção do kit. A
+hierarquia permite comparar cancelamentos agregados sem eliminar a
+distinção disponível no e-commerce.</p>
+<p><strong>O que se perde.</strong> A consulta somente ao macrostatus
+não distingue causas. O detalhe do legado é desconhecido e não é
+imputado. As categorias não demonstram, por si, efeitos causais sobre
+recompra.</p>
+<p><strong>Registros afetados.</strong> 410.000 pedidos (100%); 52.177
+são cancelados/recusados (12,73% do conjunto), sendo 15.774 legados e
+36.403 digitais. Há nove combinações de sistema e status de origem.</p>
+<p><strong>Asserções associadas.</strong>
+<code>status de origem sem mapeamento</code>,
+<code>nove status de origem</code> e restrição de unicidade
+<code>(status_origem,sistema)</code> da dimensão.</p>
+<hr />
+<h2 id="rdt-05-semântica-monetária-e-definição-das-medidas">RDT-05 —
+Semântica monetária e definição das medidas</h2>
+<p><strong>Etapa:</strong>
+<code>transformacoes_semana2.conforma_valores</code>.</p>
+<p><strong>Evidência.</strong> O legado registra total líquido com
+frete; o e-commerce registra itens líquidos sem frete. Os itens foram
+agregados por pedido antes da junção ao cabeçalho, excluindo apenas os
+órfãos da comparação com cabeçalhos. Todos os status foram incluídos.
+Após a hipótese da RDT-06, 130.000/130.000 e 280.000/280.000 pedidos
+fecham, respectivamente, com resíduo máximo de R$ 0,00.</p>
+<p><strong>Alternativas.</strong> (1) Copiar totais sem conformação:
+mistura grandezas. (2) Padronizar somente o líquido de mercadorias: útil
+para algumas análises, exige consultar frete separadamente. (3)
+Disponibilizar mercadoria bruta, desconto, frete e total com definições
+explícitas: adotada para permitir ambas as leituras e seguir o contrato
+do destino.</p>
+<p><strong>Decisão e justificativa.</strong>
+<code>valor_mercadoria = Σ(quantidade × valor_unitario)</code> é
+<strong>bruto</strong>, sem frete e antes de desconto.
+<code>valor_desconto</code> soma descontos efetivos;
+<code>valor_total = valor_mercadoria + valor_frete - valor_desconto</code>.
+O líquido dos itens é <code>valor_mercadoria - valor_desconto</code>.
+Isso evita subtrair desconto duas vezes na carga posterior.
+<code>valor_total_origem</code> e <code>sistema_origem</code> são
+preservados.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Medida (R$)</th>
+<th style="text-align: right;">Legado</th>
+<th style="text-align: right;">E-commerce</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total registrado na origem</td>
+<td style="text-align: right;">281.084.957,13</td>
+<td style="text-align: right;">734.859.099,95</td>
+</tr>
+<tr class="even">
+<td>Mercadoria bruta</td>
+<td style="text-align: right;">292.680.195,13</td>
+<td style="text-align: right;">794.473.859,71</td>
+</tr>
+<tr class="odd">
+<td>Desconto efetivo</td>
+<td style="text-align: right;">17.356.170,57</td>
+<td style="text-align: right;">59.614.759,76</td>
+</tr>
+<tr class="even">
+<td>Frete</td>
+<td style="text-align: right;">5.760.932,57</td>
+<td style="text-align: right;">10.991.760,38</td>
+</tr>
+<tr class="odd">
+<td>Total conformado com frete</td>
+<td style="text-align: right;">281.084.957,13</td>
+<td style="text-align: right;">745.850.860,33</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que se perde.</strong> O nome “total” deixa de ser
+interpretável sem a definição de origem: o campo integrado tem
+significado comum, enquanto o valor anterior exige consultar
+<code>valor_total_origem</code>. Não há descarte intencional de valores
+de cabeçalho nem da decomposição financeira.</p>
+<p><strong>Registros afetados.</strong> 410.000 pedidos (100%). Todos os
+1.392.453 itens são mantidos na conformação; 20.577 órfãos permanecem
+identificáveis para decisão na Semana 3 e não são atribuídos a pedidos
+fictícios.</p>
+<p><strong>Asserções associadas.</strong>
+<code>cardinalidade pedidos preservada</code>,
+<code>cardinalidade itens preservada</code>,
+<code>reconciliacao por pedido com origem</code>,
+<code>mercadoria bruta menos desconto igual itens liquidos</code> e
+<code>total igual mercadoria mais frete menos desconto</code>
+(tolerância de R$ 0,01 nas comparações com origem/itens).</p>
+<hr />
+<h2 id="rdt-06-desconto-sentinela-e-frete-negativo">RDT-06 — Desconto
+sentinela e frete negativo</h2>
+<p><strong>Etapa:</strong>
+<code>transformacoes_semana2.conforma_valores</code>.</p>
+<p><strong>Evidência.</strong> 4.056 itens legados (1,02% dos 397.086)
+contêm desconto <code>-1</code>, distribuídos por 4.003 pedidos (3,08%
+dos 130.000). Subtrair literalmente esse valor adicionaria R$ 1,00 por
+item. Há frete negativo em 362 pedidos legados (0,28%) e 812 digitais
+(0,29%), total de 1.174/410.000 (0,29%).</p>
+<p><strong>Alternativas.</strong> (1) Tratar <code>-1</code> como
+desconto real: cria acréscimo incompatível com a reconciliação. (2)
+Anular desconto e totais desses pedidos: explicita incerteza, mas impede
+reconciliar medidas disponíveis. (3) Zero efetivo com indicador de
+ausência: adotada por fechar os cabeçalhos sem afirmar que o desconto
+real foi zero. Para frete, foram consideradas a exclusão dos pedidos, a
+substituição por zero e a preservação do sinal; adotou-se preservar.</p>
+<p><strong>Decisão e justificativa.</strong> Somente o sentinela
+<code>-1</code> vira zero efetivo, com
+<code>desconto_nao_informado=TRUE</code>. Outros descontos não são
+truncados indiscriminadamente. O frete mantém valor e sinal, permitindo
+reconciliação. Não há evidência suficiente para afirmar que represente
+crédito, subsídio ou erro: sua causa permanece desconhecida.</p>
+<p><strong>O que se perde.</strong> O desconto real não é recuperável.
+Uma análise que ignore o indicador confundirá ausência com desconto
+zero. Preservar fretes negativos pode manter defeitos da origem, mas
+evita inventar receita ou apagar sua ocorrência.</p>
+<p><strong>Registros afetados.</strong> 4.056 itens (1,02% do legado)
+recebem desconto efetivo zero e indicador; 1.174 pedidos (0,29% do
+conjunto) mantêm frete negativo.</p>
+<p><strong>Asserções associadas.</strong>
+<code>nenhum desconto sentinela conformado</code>,
+<code>frete preserva valor e sinal da origem</code> e
+<code>reconciliacao por pedido com origem</code>.</p>
+<hr />
+<h2 id="rdt-07-taxonomia-de-produtos-e-atributo-de-atividade">RDT-07 —
+Taxonomia de produtos e atributo de atividade</h2>
+<p><strong>Etapa:</strong>
+<code>transformacoes_semana2.conforma_categorias</code>.</p>
+<p><strong>Evidência.</strong> Há 27 rótulos distintos para 3.000
+produtos legados e 21 nós (8 raízes, 13 filhos) para 12.000 digitais. Os
+casos híbridos são 112 produtos em <code>informatica e games</code>
+(3,73% do legado) e 111 em <code>TV E SOM</code> (3,70%).
+<code>DIVERSOS</code>, <code>OUTROS</code> e vazio somam 340 (11,33%). O
+atributo ATIVO contém 340 valores N (11,33%), que não podem ser
+convertidos por <code>bool("N")</code>.</p>
+<p><strong>Alternativas.</strong> (1) Excluir produtos
+ambíguos/genéricos: perde catálogo e vínculos dos itens. (2) Inferir
+categoria específica pela descrição: pode recuperar detalhe, exige
+validação adicional. (3) Mapear de forma determinística, preservando
+categoria original e indicadores: adotada.</p>
+<p><strong>Decisão e justificativa.</strong> Adota-se a árvore digital;
+variantes de grafia são uniformizadas para consultar o mapa.
+<code>TV E SOM</code> fica em <code>Áudio e TV</code>, sem subcategoria.
+<code>informatica e games</code> fica em <code>Informática</code>, sem
+subcategoria, como escolha operacional explícita: não é uma
+correspondência sem perda nem o pai comum dos dois ramos. Genéricos
+ficam em <code>Outros</code>. Rótulos amplos <code>TELEFONIA</code> e
+<code>AUDIO/VIDEO</code> não são reduzidos artificialmente a
+<code>Smartphones</code> ou <code>Áudio</code>. Preservam-se
+<code>categoria_origem</code> e indicadores de ambiguidade. IDs de
+produtos entre sistemas não são equiparados. S vira TRUE e N FALSE.</p>
+<p><strong>O que se perde.</strong> A projeção do rótulo híbrido em
+Informática não representa a participação de games; análises somente
+pela categoria conformada omitem esse aspecto. Categorias
+amplas/genéricas não permitem reconstruir subcategorias. O texto
+original permite auditar a escolha.</p>
+<p><strong>Registros afetados.</strong> 15.000 produtos (100%); 223
+híbridos (7,43% dos 3.000 legados), 340 genéricos (11,33%) e 340
+inativos legados corretamente preservados (11,33%). Mapas cobrem 3.000
+IDs legados e 12.000 digitais (100%).</p>
+<p><strong>Asserções associadas.</strong>
+<code>cardinalidade produtos preservada</code>,
+<code>categoria origem preservada</code>,
+<code>sku de produto unico</code> e
+<code>ativo S e N corretamente mapeados</code>.</p>
+<hr />
+<h2
+id="rdt-08-classificação-e-tratamento-de-ausências-e-valores-inválidos">RDT-08
+— Classificação e tratamento de ausências e valores inválidos</h2>
+<p><strong>Etapas:</strong> <code>unifica_clientes</code>,
+<code>conforma_valores</code>, <code>trata_datas_e_ausencias</code>,
+<code>liga_sac_e_avaliacoes</code> e
+<code>inventaria_ausencias</code>.</p>
+<p><strong>Evidência.</strong> O inventário completo distingue NULL SQL,
+vazio textual, chave omitida, null JSON e sentinelas. Foram observadas
+as seguintes ausências/sentinelas nas fontes brutas, antes da
+deduplicação do SAC:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Fonte / campo</th>
+<th>Representação</th>
+<th style="text-align: right;">Ocorrências / base</th>
+<th style="text-align: right;">Percentual</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Legado: CPF</td>
+<td>Vazio</td>
+<td style="text-align: right;">4.423 / 47.250</td>
+<td style="text-align: right;">9,36%</td>
+</tr>
+<tr class="even">
+<td>Legado: CIDADE</td>
+<td>N/A</td>
+<td style="text-align: right;">933 / 47.250</td>
+<td style="text-align: right;">1,97%</td>
+</tr>
+<tr class="odd">
+<td>Legado: CATEGORIA</td>
+<td>Vazio</td>
+<td style="text-align: right;">103 / 3.000</td>
+<td style="text-align: right;">3,43%</td>
+</tr>
+<tr class="even">
+<td>Legado: DT_ENTREGA</td>
+<td>NULL SQL</td>
+<td style="text-align: right;">28.808 / 130.000</td>
+<td style="text-align: right;">22,16%</td>
+</tr>
+<tr class="odd">
+<td>Legado: DT_ENTREGA</td>
+<td>1900-01-01</td>
+<td style="text-align: right;">1.025 / 130.000</td>
+<td style="text-align: right;">0,79%</td>
+</tr>
+<tr class="even">
+<td>Legado: VL_DESCONTO</td>
+<td>-1</td>
+<td style="text-align: right;">4.056 / 397.086</td>
+<td style="text-align: right;">1,02%</td>
+</tr>
+<tr class="odd">
+<td>E-commerce: tax_id</td>
+<td>NULL SQL</td>
+<td style="text-align: right;">6.855 / 85.000</td>
+<td style="text-align: right;">8,06%</td>
+</tr>
+<tr class="even">
+<td>E-commerce: parent_id</td>
+<td>NULL SQL (raiz)</td>
+<td style="text-align: right;">8 / 21</td>
+<td style="text-align: right;">38,10%</td>
+</tr>
+<tr class="odd">
+<td>E-commerce: delivered_at</td>
+<td>NULL SQL</td>
+<td style="text-align: right;">72.796 / 280.000</td>
+<td style="text-align: right;">26,00%</td>
+</tr>
+<tr class="even">
+<td>SAC: data_fechamento</td>
+<td>Vazio</td>
+<td style="text-align: right;">5.856 / 96.140</td>
+<td style="text-align: right;">6,09%</td>
+</tr>
+<tr class="odd">
+<td>SAC: nota_satisfacao</td>
+<td>Vazio</td>
+<td style="text-align: right;">8.682 / 96.140</td>
+<td style="text-align: right;">9,03%</td>
+</tr>
+<tr class="even">
+<td>JSON: rating</td>
+<td>Chave omitida</td>
+<td style="text-align: right;">4.831 / 160.000</td>
+<td style="text-align: right;">3,02%</td>
+</tr>
+<tr class="odd">
+<td>JSON: title</td>
+<td>Chave omitida</td>
+<td style="text-align: right;">24.264 / 160.000</td>
+<td style="text-align: right;">15,17%</td>
+</tr>
+<tr class="even">
+<td>JSON: comment</td>
+<td>Chave omitida</td>
+<td style="text-align: right;">47.814 / 160.000</td>
+<td style="text-align: right;">29,88%</td>
+</tr>
+<tr class="odd">
+<td>JSON: verified_purchase</td>
+<td>Chave omitida</td>
+<td style="text-align: right;">15.731 / 160.000</td>
+<td style="text-align: right;">9,83%</td>
+</tr>
+<tr class="even">
+<td>JSON: helpful_votes</td>
+<td>Chave omitida</td>
+<td style="text-align: right;">72.129 / 160.000</td>
+<td style="text-align: right;">45,08%</td>
+</tr>
+</tbody>
+</table>
+<p>Não foram observados nulls JSON explícitos nesses campos; sua
+distinção de omissão permanece preservada na estrutura de ingestão.
+<code>rating</code> aparece como string em 16.108 avaliações (10,07%),
+situação de heterogeneidade de tipo, não ausência.</p>
+<p><strong>Alternativas.</strong> (1) Preencher com zero, FALSE, média
+ou data estimada: fornece valores, mas mistura desconhecido e observado.
+(2) Excluir registros incompletos: simplifica cálculos, perde cobertura
+e pode introduzir viés. (3) Manter NULL, distinguir causas observáveis e
+criar indicadores: adotada; o desconto tem a hipótese financeira
+específica da RDT-06.</p>
+<p><strong>Decisão e justificativa.</strong></p>
+<ul>
+<li>CPF não coletado: NULL normalizado e identidade separada. Cidade
+N/A: excluída da escolha de cidade válida; a identidade pode obter
+cidade de outro cadastro do grupo. Categoria vazia: Outros, mantendo a
+falta de especificação.</li>
+<li><code>parent_id</code> nulo: não aplicável a categoria raiz,
+preservado. Entrega nula em pedido não entregue: evento não ocorrido/não
+aplicável conforme status; não se atribui automaticamente essa causa a
+pedidos entregues sem data.</li>
+<li>Entrega 1900-01-01: NULL com <code>entrega_sentinela</code> e
+<code>entrega_sem_data</code>. Não há NOT NULL na origem que prove por
+que o sentinela foi adotado.</li>
+<li>Entrega anterior ao pedido: anular data e prazo na visão conformada,
+com <code>entrega_inconsistente</code>; a data original permanece em
+stg. São 775 casos legados (0,60%) e 1.683 digitais (0,60%).</li>
+<li>SAC sem encerramento registrado: data NULL e indicador, sem afirmar
+que ainda está aberto. Há 5.856 linhas brutas (6,09%); após
+deduplicação, 5.791/95.000 (6,10%).</li>
+<li>Nota não coletada ou rating omitido: NULL, sem imputação. Nota fora
+de 1 a 5: NULL e indicador; no SAC deduplicado, 2.800/95.000 (2,95%) são
+inválidas.</li>
+<li>Tempo de resolução negativo: NULL e
+<code>tempo_resolucao_invalido</code>, não zero horas. As 353 linhas
+brutas (0,37% de 96.140) correspondem a 350 protocolos únicos (0,37% de
+95.000).</li>
+<li>JSON opcional: texto omitido não é inventado; compra verificada
+ausente é desconhecida, não FALSE; votos ausentes não são zero. Rating
+numérico e string são convertidos ao mesmo inteiro apenas na
+conformação. Stg preserva tipos, omissão e null explícito.</li>
+</ul>
+<p><strong>O que se perde.</strong> Valores reais desconhecidos não são
+recuperados; métricas calculadas apenas sobre observações válidas podem
+ter viés de seleção. Indicadores e cópias brutas conservam o motivo
+observável da exclusão analítica. Estado “aberto” e causa da falha não
+são inferidos sem evidência.</p>
+<p><strong>Registros afetados.</strong> Bases e percentuais por campo
+estão na tabela. Um registro pode ter várias anomalias; as contagens não
+são somáveis. Além das 1.025 sentinelas (0,79% do legado), 2.458/410.000
+inversões (0,60%) são anuladas com indicadores. Bases bruta e
+deduplicada do SAC são declaradas separadamente.</p>
+<p><strong>Asserções associadas.</strong>
+<code>ausencias sem regra de tratamento</code>,
+<code>cidade N/A nao e cidade valida</code>,
+<code>CPF ausente nao foi unificado entre pessoas</code>,
+<code>sentinela de entrega sinalizada e anulada</code>,
+<code>entrega valida nunca anterior ao pedido</code>,
+<code>horas negativas anuladas e sinalizadas</code>,
+<code>notas conformadas no dominio</code> e
+<code>nota JSON ausente mantida NULL</code>.</p>
+<hr />
+<h2 id="rdt-09-fusos-horários-utc-e-dia-de-negócio">RDT-09 — Fusos
+horários, UTC e dia de negócio</h2>
+<p><strong>Etapas:</strong> <code>conforma_valores</code>,
+<code>trata_datas_e_ausencias</code> e
+<code>liga_sac_e_avaliacoes</code>.</p>
+<p><strong>Evidência.</strong> O legado usa timestamps sem fuso; o
+e-commerce fornece instantes TIMESTAMPTZ. No JSON, 31.915/160.000
+horários (19,95%) não informam offset. Converter tudo ao dia UTC sem
+critério muda o dia civil de 44.184/410.000 pedidos (10,78%), sendo
+9.290 legados e 34.894 digitais.</p>
+<p><strong>Alternativas.</strong> (1) Ignorar offsets e comparar
+horários ingênuos: mistura instantes. (2) Assumir Cuiabá para todos os
+horários sem fuso: defensável com confirmação da operação local,
+indisponível. (3) Assumir <code>America/Sao_Paulo</code> para horários
+sem fuso, guardar instantes em UTC e conservar o dia de negócio nessa
+zona: adotada como convenção explícita.</p>
+<p><strong>Decisão e justificativa.</strong> O fuso assumido é hipótese,
+não descoberta comprovada. Horários legados recebem essa zona; os
+digitais preservam o instante; avaliações respeitam offset quando
+disponível, e as demais recebem a hipótese e
+<code>fuso_assumido=TRUE</code>. Usam-se timestamps com fuso.
+<code>data_pedido_local</code>, <code>data_entrega_local</code> e data
+civil de avaliação são derivadas em America/Sao_Paulo. DATA_CORTE
+continua 30/06/2025: o corte diário deve usar a data local de negócio,
+sem redefinir silenciosamente o contrato para meia-noite UTC. O SAC
+informa somente datas e não recebe um horário artificial.</p>
+<p><strong>O que se perde.</strong> O fuso verdadeiro dos horários
+ingênuos é irrecuperável sem informação externa. A hipótese pode
+deslocar eventos se a origem operava em outra zona; string/data bruta e
+indicador tornam o risco auditável. A data diária perde o horário, por
+isso o timestamp completo também é mantido.</p>
+<p><strong>Registros afetados.</strong> 410.000 pedidos (100%) e 160.000
+avaliações (100%) recebem representação uniforme. A hipótese aplica-se a
+130.000 horários de pedido legados (100% dessa origem) e 31.915
+avaliações (19,95% do JSON). A fronteira de corte também é verificada às
+23h59min59s.</p>
+<p><strong>Asserções associadas.</strong>
+<code>UTC legado representa horario local assumido</code>,
+<code>UTC ecommerce preserva instante original</code>,
+<code>JSON sem fuso recebe zona assumida</code>,
+<code>JSON com fuso preserva instante</code> e
+<code>fronteira do corte em horario de negocio</code>.</p>
+<hr />
+<h2 id="rdt-10-itens-sem-pedido-correspondente">RDT-10 — Itens sem
+pedido correspondente</h2>
+<p><strong>Etapa:</strong> 03, carga de itens.</p>
+<p><strong>Evidência.</strong> Dos 1.392.453 itens conformados, 20.577
+não encontram pedido no respectivo sistema. São 5.868 de 397.086 itens
+legados (1,4778%) e 14.709 de 995.367 itens digitais (1,4777%). Seus
+valores líquidos somam R$ 586.213,20 e R$ 2.204.879,10, respectivamente.
+Esses valores não pertencem a cabeçalhos de pedido existentes; somá-los
+ao faturamento inventaria uma ligação.</p>
+<p><strong>Alternativas consideradas.</strong> (1) Descartar os itens:
+simplifica a carga, mas apaga registros e impede investigar o problema.
+(2) Criar pedidos sintéticos: preserva os itens no fato, mas exige
+inventar cliente, data, canal e status. (3) Separar os itens em
+quarentena e carregar apenas aqueles com pedido real: preserva a
+evidência sem comprometer o grão e as chaves estrangeiras.</p>
+<p><strong>Decisão e justificativa.</strong> Adotamos a alternativa 3.
+<code>aud.itens_quarentena</code> contém a linha conformada, os IDs
+originais, o sistema e o motivo <code>PEDIDO_INEXISTENTE</code>. Os
+1.371.876 itens restantes entram no fato. A partição é feita por
+existência do pedido, e não por eliminação arbitrária de duplicatas.</p>
+<p><strong>O que se perde.</strong> Os órfãos não participam das
+consultas usuais ao fato de itens. Não é possível atribuir suas
+quantidades e valores a clientes, datas ou pedidos verdadeiros. Os
+registros permanecem recuperáveis na quarentena e na origem; o vínculo
+ausente não pode ser reconstruído com os dados disponíveis.</p>
+<p><strong>Registros afetados.</strong> 20.577/1.392.453 itens (1,4778%)
+encaminhados à quarentena; 1.371.876/1.392.453 (98,5222%) carregados no
+fato.</p>
+<p><strong>Asserções associadas.</strong>
+<code>particao itens sem perda nem sobreposicao</code>,
+<code>quarentena apenas pedidos inexistentes</code>,
+<code>itens carregados mais quarentena LEGADO/ECOM</code> e integridade
+das FKs do fato de itens. Cada item deve estar em exatamente um dos dois
+destinos, com contagem conferida por sistema.</p>
+<hr />
+<h2 id="rdt-11-grão-dos-fatos-e-prevenção-de-multiplicação">RDT-11 —
+Grão dos fatos e prevenção de multiplicação</h2>
+<p><strong>Etapa:</strong> 03, carga de dimensões e fatos.</p>
+<p><strong>Evidência.</strong> Há 410.000 pedidos e 1.371.876 linhas de
+item elegíveis. Existem 320 pares pedido/produto repetidos, envolvendo
+640 linhas (0,0467% dos itens carregados). Agrupar apenas por pedido e
+produto colapsaria 320 linhas distintas (0,0233%). Além disso, juntar
+pedidos, itens, SAC e avaliações antes de agregar poderia repetir
+valores de cabeçalho, principalmente o frete.</p>
+<p><strong>Alternativas consideradas.</strong> (1) Uma tabela ampla,
+repetindo cabeçalhos em cada item/atendimento/avaliação: facilita
+algumas consultas, mas torna os totais não aditivos e introduz
+multiplicação. (2) Um fato de item por pedido/produto: reduz linhas, mas
+perde a identidade de linhas distintas. (3) Separar os grãos originais e
+manter a ligação por chaves substitutas.</p>
+<p><strong>Decisão e justificativa.</strong> Adotamos a alternativa 3,
+com as declarações:</p>
+<ul>
+<li>Uma linha de <code>dw.fato_pedido</code> representa um pedido
+identificado pelo sistema de origem e pelo ID original.</li>
+<li>Uma linha de <code>dw.fato_item_pedido</code> representa uma linha
+de item de um pedido na origem.</li>
+<li>Uma linha de <code>dw.fato_atendimento</code> representa um
+protocolo de atendimento após remoção de cópias exatas.</li>
+<li>Uma linha de <code>dw.fato_avaliacao</code> representa uma avaliação
+identificada por <code>review_id</code>.</li>
+</ul>
+<p><code>aud.map_item</code> associa cada ID original de item a
+<code>item_sk</code>, <code>pedido_sk</code> e <code>produto_sk</code>.
+<code>aud.pedidos</code> conserva IDs e indicadores de conformação. A
+carga usa ordenação determinística para gerar chaves.
+<code>qtd_itens</code> significa soma das <strong>unidades</strong>, não
+quantidade de linhas. <code>valor_mercadoria</code> é o valor bruto dos
+itens; <code>valor_desconto</code> é o desconto efetivo;
+<code>valor_total</code> inclui o frete uma única vez.
+<code>valor_linha</code> é quantidade × valor unitário − desconto.</p>
+<p><strong>O que se perde.</strong> O esquema estrela não expõe todos os
+campos brutos em cada fato. Por exemplo, o DDL do item não tem ID
+original: é necessário consultar o mapa auxiliar. As cópias exatas do
+SAC já haviam sido reduzidas na RDT-16 da semana 2 (1.140/96.140 linhas,
+1,1858%). Não há colapso adicional das linhas legítimas de item, nem
+mudança de valores monetários nesta decisão.</p>
+<p><strong>Registros afetados.</strong> A regra de grão abrange
+410.000/410.000 pedidos, 1.371.876/1.371.876 itens elegíveis,
+95.000/95.000 protocolos e 160.000/160.000 avaliações (100% de cada
+população). Preserva especialmente as 640 linhas de produto repetido
+identificadas acima.</p>
+<p><strong>Asserções associadas.</strong>
+<code>cardinalidade fato_pedido/atendimento/avaliacao</code>,
+<code>rastro de todas as linhas de item</code>,
+<code>reconciliacao itens por pedido</code>,
+<code>identidade financeira por pedido</code>, unicidade garantida por
+PK/índices e comparação integral de chaves, valores e restrições após
+reexecução.</p>
+<hr />
+<h2 id="rdt-12-pedidos-sem-cliente-correspondente">RDT-12 — Pedidos sem
+cliente correspondente</h2>
+<p><strong>Etapa:</strong> 03, verificação anterior à publicação da
+carga.</p>
+<p><strong>Evidência.</strong> Os 130.000 pedidos legados e os 280.000
+digitais encontram <code>cliente_sk</code> após a conformação. São zero
+pedidos sem cliente em 410.000 (0%). Isso depende de usar o mapa
+completo de IDs da etapa 2, incluindo os IDs que foram unificados; não
+basta ligar somente aos IDs canônicos da dimensão.</p>
+<p><strong>Alternativas consideradas.</strong> (1) Criar um cliente
+<code>DESCONHECIDO</code> e direcionar órfãos a ele: preserva o pedido,
+mas mistura pessoas sem identidade conhecida. (2) Descartar pedidos sem
+cliente: mantém as FKs válidas, mas perde receita e população. (3)
+Exigir mapeamento completo e interromper a carga se aparecer um caso não
+resolvido, preservando o estado publicado.</p>
+<p><strong>Decisão e justificativa.</strong> Adotamos a alternativa 3,
+pois não há casos que justifiquem criar uma entidade sintética. A
+verificação ocorre antes de esvaziar os fatos. Uma falha exige
+investigação e decisão registrada, não descarte silencioso ou atribuição
+automática a outra pessoa.</p>
+<p><strong>O que se perde.</strong> Nenhum pedido é perdido na base
+atual. A política sacrifica a disponibilidade de uma nova carga se
+surgirem órfãos: o processamento é bloqueado até resolver a referência.
+Também não recupera identidades reais que a própria origem não permita
+distinguir; continuam valendo as limitações de pareamento por CPF
+registradas na semana 2.</p>
+<p><strong>Registros afetados.</strong> 0/410.000 pedidos (0%) exigiram
+tratamento de identidade na carga; 410.000/410.000 (100%) foram
+verificados e carregados com cliente válido.</p>
+<p><strong>Asserções associadas.</strong>
+<code>pedidos sem cliente correspondente</code> e
+<code>FK dw.fato_pedido.cliente_sk</code>. Um teste transacional
+introduziu um cliente nulo em um pedido conformado, confirmou o bloqueio
+e a preservação dos 410.000 fatos, e reverteu a alteração. O teste é
+reproduzível em <code>testar_semana3.py</code>.</p>
+<hr />
+<h2 id="rdt-13-vínculos-dos-arquivos-e-limites-de-interpretação">RDT-13
+— Vínculos dos arquivos e limites de interpretação</h2>
+<p><strong>Etapas:</strong> 02/03, associação do SAC e das avaliações
+aos pedidos; uso na ABT.</p>
+<p><strong>Evidência.</strong> Todos os 95.000 protocolos únicos e todas
+as 160.000 avaliações encontram o pedido declarado; todas as avaliações
+também encontram o produto separadamente. Assim, há zero casos sem
+pedido em cada fonte (0%). Contudo:</p>
+<ul>
+<li>159.920/160.000 avaliações (99,95%) referenciam produto que não
+consta nas linhas daquele pedido. Somente 80 pares são
+consistentes.</li>
+<li>86.954/95.000 protocolos (91,5305%) têm CPF comparável e diferente
+do CPF do cliente do pedido. O ID do pedido não comprova quem abriu o
+contato.</li>
+<li>Em outros 8.045/95.000 protocolos (8,4684%), a comparação de CPF é
+desconhecida; apenas um protocolo tem igualdade confirmada
+(0,0011%).</li>
+<li>47.667/95.000 atendimentos (50,1758%) e 79.777/160.000 avaliações
+(49,8606%) têm data anterior ao pedido referenciado. As datas não foram
+deslocadas para forçar coerência.</li>
+</ul>
+<p>Essas ocorrências se sobrepõem; seus percentuais não devem ser
+somados. Encontrar duas chaves válidas separadamente não prova que a
+relação entre elas seja verdadeira. A elevada inconsistência limita o
+uso analítico dos arquivos.</p>
+<p><strong>Alternativas consideradas.</strong> (1) Excluir registros
+inconsistentes: evita relações duvidosas nas consultas, mas elimina
+quase todas as avaliações. (2) Manter todos os vínculos sem indicadores:
+preserva volume, mas dá aparência de certeza a associações que os dados
+contradizem. (3) Preservar referências declaradas e evidência da
+inconsistência no DW/auditoria, restringindo seu uso na ABT. Para um ID
+realmente inexistente, manter a ocorrência com FK nula e referência
+original na auditoria; não inventar um pedido.</p>
+<p><strong>Decisão e justificativa.</strong> Adotamos a alternativa 3.
+As tabelas <code>aud.atendimentos</code> e <code>aud.avaliacoes</code>
+preservam IDs, linha de origem e indicadores de vínculo ausente;
+avaliações também têm <code>produto_consta_no_pedido</code>. O cliente
+do SAC é o proprietário do pedido referenciado, não a identidade
+comprovada do solicitante. <code>compra_verificada</code> conserva a
+declaração da fonte, sem ser usada como validação própria do par
+pedido/produto.</p>
+<p>Na ABT, contatos são contados como <strong>ocorrências associadas aos
+pedidos do cliente</strong>, apenas quando a abertura está entre a data
+do pedido e o corte. Avaliações exigem, adicionalmente, produto presente
+no pedido e submissão nesse mesmo intervalo. Isso resulta em 33.015
+atendimentos (34,7526% dos 95.000) e 26 avaliações (0,0163% das 160.000)
+elegíveis aos atributos. Esses filtros consideram corte e coerência
+conjuntamente; não são contagens de registros apagados do DW. As médias
+de nota desconhecidas permanecem nulas.</p>
+<p><strong>O que se perde.</strong> Os fatos não resolvem quem realmente
+escreveu a avaliação ou abriu o atendimento. A ABT deixa de usar
+informação potencialmente útil de registros incoerentes e posteriores ao
+corte, e sua variável de avaliações fica quase inteiramente ausente.
+Preservar a ocorrência no DW mantém a possibilidade de investigação; não
+transforma a referência declarada em evidência de compra. A política
+para FKs nulas é defensiva: a base atual não contém esses casos e a
+etapa 2 também possui verificações que bloqueiam vínculos não
+encontrados.</p>
+<p><strong>Registros afetados.</strong> Política de preservação aplicada
+a 255.000/255.000 ocorrências conformadas (100%). Zero ocorrências
+tiveram FK de pedido anulada; 159.920/160.000 avaliações (99,95%) foram
+sinalizadas pelo par inconsistente. Os demais subconjuntos e
+denominadores estão explicitados acima.</p>
+<p><strong>Asserções associadas.</strong>
+<code>vinculos e flags das avaliacoes</code>,
+<code>SAC sem vinculos fabricados</code>, cardinalidade dos dois fatos,
+todas as FKs dos arquivos e
+<code>atributos SAC recalculados ate corte</code> /
+<code>avaliacoes validas recalculadas ate corte</code>. A consistência
+produto/pedido é recalculada a partir dos itens efetivamente
+carregados.</p>
+<hr />
+<h2
+id="rdt-14-desenho-dos-atributos-da-abt-e-garantia-de-corte-temporal-sem-vazamento">RDT-14
+— Desenho dos atributos da ABT e garantia de corte temporal (sem
+vazamento)</h2>
+<p><strong>Etapa:</strong> <code>04_abt.py --correta</code>.</p>
+<p><strong>O que o dado mostrava:</strong> 110.195 clientes elegíveis
+(com ao menos um pedido registrado até 30/06/2025). As transações cobrem
+de 2023 até novembro de 2025. Calcular métricas agregadas sem
+congelamento estrito de tempo em 30/06/2025 permitiria que transações
+ocorridas durante a janela do alvo (01/07 a 28/09/2025) contaminassem os
+atributos preditores de comportamento prévio.</p>
+<p><strong>Alternativas consideradas:</strong> 1. Utilizar toda a base
+disponível e definir atributos em relação à data corrente da execução:
+simples e comum em análises ad-hoc, mas causa vazamento temporal
+catastrófico (o modelo decora o futuro). 2. Congelar estritamente os
+fatos em <code>data_pedido_sk &lt;= '2025-06-30'</code> e definir o alvo
+na janela <code>2025-07-01</code> a <code>2025-09-28</code>: garante que
+os 9 preditores comportamentais reflitam exclusivamente o estado de
+conhecimento disponível na data de corte.</p>
+<p><strong>Decisão e justificativa:</strong> Alternativa 2. A ABT
+correta congela as variáveis preditoras em <span
+class="math inline"><em>t</em><sub>0</sub> = 30/06/2025</span>.
+<code>recencia_dias</code> mede <span
+class="math inline"><em>t</em><sub>0</sub> − max (<em>t</em><sub>compra</sub>)</span>;
+<code>frequencia_pedidos</code>, <code>valor_monetario_total</code> e
+<code>ticket_medio</code> agregam exclusivamente pedidos registrados até
+<span class="math inline"><em>t</em><sub>0</sub></span>. Atendimentos e
+avaliações só entram se a abertura ocorreu entre o pedido e a data de
+corte. O status dos pedidos não foi filtrado para os preditores porque a
+origem não preserva o log temporal de mudanças de estado (evitando
+vazamento de status).</p>
+<p><strong>O que se perde:</strong> Perde-se a informação transacional
+recente para efeitos de descrição histórica do cliente; descarta-se
+avaliações e chamados posteriores a <span
+class="math inline"><em>t</em><sub>0</sub></span>. Os dados permanecem
+preservados no DW; a restrição é estritamente de corte analítico.</p>
+<p><strong>Registros afetados:</strong> 110.195 clientes populam a ABT;
+24.056 clientes (21,83%) sinalizados como positivos no alvo. 68.406
+pedidos posteriores a 30/06/2025 foram excluídos do cálculo das
+variáveis preditivas.</p>
+<p><strong>Asserções associadas:</strong>
+<code>populacao elegivel completa</code>,
+<code>ABT grao cliente e corte</code>,
+<code>ABT corte e alvo binario</code>, <code>taxa do alvo</code>,
+<code>atributos pedidos recalculados ate corte</code>,
+<code>ABT contagens e recencias validas</code> (recência <span
+class="math inline"> ≥ 0</span>). Teste transacional de mutação do
+futuro com hash invariante.</p>
+<hr />
+<h2
+id="rdt-15-vazamentos-introduzidos-deliberadamente-na-versão-de-comparação">RDT-15
+— Vazamentos introduzidos deliberadamente na versão de comparação</h2>
+<p><strong>Etapa:</strong> <code>04_abt.py --vazamento</code>.</p>
+<p><strong>O que o dado mostrava:</strong> Na versão correta, a
+capacidade preditiva legítima das variáveis RFM é modesta (AUC <span
+class="math inline"> ≈ 0, 53</span>), pois o comportamento de recompra é
+ruidoso e a janela alvo tem 21,8% de positivos. Para conduzir o
+experimento pedagógico exigido pela disciplina, era necessário produzir
+e mensurar o efeito de vazamento temporal grosseiro e vazamento
+metodológico sutil.</p>
+<p><strong>Alternativas consideradas:</strong> 1. Introduzir a própria
+variável alvo como preditora com ruído aleatório: artificial, não
+reproduz os erros metodológicos da engenharia de dados. 2. Omitir a
+cláusula de corte temporal nos atributos de pedidos
+(<code>recencia_dias</code> e <code>frequencia_pedidos</code>) e
+normalizar globalmente <code>valor_monetario_total</code> via Z-score
+antes da partição treino/teste: reproduz os dois erros mais frequentes
+em pipelines de mineração em produção.</p>
+<p><strong>Decisão e justificativa:</strong> Alternativa 2. Criou-se a
+tabela <code>abt.recompra_90d_vazamento</code> mantendo os mesmos
+110.195 clientes e o mesmo alvo. Para <code>recencia_dias</code> e
+<code>frequencia_pedidos</code>, utilizou-se <code>dw.fato_pedido</code>
+sem restrição temporal, permitindo que compras da janela do alvo
+influenciem o cálculo. Para <code>valor_monetario_total</code>,
+calculou-se o Z-score univariado (<span
+class="math inline"><em>μ</em> = 0, <em>σ</em> = 1</span>) sobre todos
+os clientes antes do particionamento.</p>
+<p><strong>O que se perde:</strong> Perde-se a validade científica do
+modelo preditivo para uso em produção (o modelo torna-se inútil na
+prática, funcionando apenas em laboratório). Preserva-se o valor
+didático do contraexemplo mensurado.</p>
+<p><strong>Registros afetados:</strong> 110.195 registros afetados na
+ABT; 47.984 clientes (43,5% da base) tiveram recência calculada como
+negativa (<span class="math inline"> &lt; 0</span> dias) e frequência
+inflada por compras futuras. 100% dos clientes tiveram
+<code>valor_monetario_total</code> normalizado com parâmetros
+globais.</p>
+<p><strong>Asserções associadas:</strong>
+<code>populacao elegivel completa vazamento</code>,
+<code>taxa do alvo vazamento</code>,
+<code>vazamento temporal recencias negativas detectadas</code> (<span
+class="math inline"> ≥ 1</span>),
+<code>vazamento temporal frequencias infladas</code> (<span
+class="math inline"> ≥ 1</span>),
+<code>vazamento sutil media zscore global</code> (entre <span
+class="math inline">−0, 01</span> e <span
+class="math inline">+0, 01</span>),
+<code>vazamento sutil desvio zscore global</code> (entre <span
+class="math inline">0, 99</span> e <span
+class="math inline">1, 01</span>).</p>
+<hr />
+<h2 id="rdt-16-duplicatas-exatas-do-sac">RDT-16 — Duplicatas exatas do
+SAC</h2>
+<p><strong>Etapa:</strong>
+<code>transformacoes_semana2.liga_sac_e_avaliacoes</code>.</p>
+<p><strong>Evidência.</strong> 96.140 linhas possuem 95.000 protocolos
+distintos. As 1.140 excedentes têm conteúdo idêntico; não há protocolo
+repetido com conteúdo conflitante.</p>
+<p><strong>Alternativas.</strong> (1) Cada linha como atendimento:
+preserva multiplicidade, duplica métricas. (2) Escolher arbitrariamente
+uma linha de qualquer protocolo repetido: permite chave única, pode
+ocultar conflitos. (3) Remover apenas duplicatas comprovadamente exatas
+e interromper caso haja conflito: adotada.</p>
+<p><strong>Decisão e justificativa.</strong> Stg mantém todas as linhas.
+Na conformação, escolhe-se a primeira ocorrência lógica somente após
+verificar igualdade de todos os campos originais.
+<code>_linha_origem</code> mantém referência ao arquivo, e a chave
+primária por protocolo assegura o grão de um atendimento.</p>
+<p><strong>O que se perde.</strong> A multiplicidade do arquivo deixa de
+representar contatos adicionais na visão conformada. Ocorrências e
+contagens continuam no bruto; não há evidência de atendimentos distintos
+nas cópias idênticas.</p>
+<p><strong>Registros afetados.</strong> 1.140 linhas redundantes (1,19%
+das 96.140), resultando em 95.000 eventos únicos. Percentuais
+posteriores de notas, horas e encerramento usam essa base.</p>
+<p><strong>Asserções associadas.</strong>
+<code>SAC protocolos repetidos sem conflito de conteudo</code> e
+<code>SAC uma linha por protocolo</code>.</p>
+<hr />
+<h2 id="rdt-17-preços-de-referência-com-magnitude-suspeita">RDT-17 —
+Preços de referência com magnitude suspeita</h2>
+<hr />
+<h2
+id="tabela-resumo-de-todas-as-decisões-de-transformação">Tabela-Resumo
+de Todas as Decisões de Transformação</h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Ficha</th>
+<th>Decisão Central</th>
+<th style="text-align: right;">Registros Afetados</th>
+<th style="text-align: right;">% da Base</th>
+<th>Informação Perdida / Limitação Assumida</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>RDT-01</strong></td>
+<td>Carga completa em lotes de 10.000 para camada <code>stg</code></td>
+<td style="text-align: right;">2.205.864</td>
+<td style="text-align: right;">100,00%</td>
+<td>Não mantém histórico de snapshots anteriores em staging</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-02</strong></td>
+<td>Unificação de clientes por CPF preservando DV inválido</td>
+<td style="text-align: right;">118.215</td>
+<td style="text-align: right;">89,42%</td>
+<td>~15% de clientes sobrepostos sem CPF comum não são unidos</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-03</strong></td>
+<td>Resolução determinística de duplicatas internas do legado</td>
+<td style="text-align: right;">1.984</td>
+<td style="text-align: right;">4,20%</td>
+<td>Prioriza cadastro mais antigo; campos conflitantes descartados</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-04</strong></td>
+<td>Conformação de status (<code>payment_declined</code> <span
+class="math inline">→</span> <code>CANCELADO</code>)</td>
+<td style="text-align: right;">13.990</td>
+<td style="text-align: right;">3,41%</td>
+<td>Perde distinção entre cancelamento voluntário e recusa bancária</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-05</strong></td>
+<td>Harmonização monetária (adiciona frete ao e-commerce)</td>
+<td style="text-align: right;">280.000</td>
+<td style="text-align: right;">68,29%</td>
+<td>Altera conceito de <code>total_amount</code> original para
+faturamento com frete</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-06</strong></td>
+<td>Sentinela <code>-1</code> em desconto vira zero; preserva frete
+negativo</td>
+<td style="text-align: right;">4.056</td>
+<td style="text-align: right;">0,29%</td>
+<td>Desconto real omitido na origem é irrecuperável</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-07</strong></td>
+<td>Mapeamento da taxonomia de categorias em árvore</td>
+<td style="text-align: right;">3.000</td>
+<td style="text-align: right;">100,00%</td>
+<td>Rótulos genéricos (<code>DIVERSOS</code>, <code>OUTROS</code>)
+classificados como indefinidos</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-08</strong></td>
+<td>Tratamento de ausências com sentinela <code>1900-01-01</code> <span
+class="math inline">→</span> <code>NULL</code> + flag</td>
+<td style="text-align: right;">1.025</td>
+<td style="text-align: right;">0,79%</td>
+<td>Data real de entrega de pedidos sentinela é irrecuperável</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-09</strong></td>
+<td>Padronização temporal em UTC e dia de negócio local</td>
+<td style="text-align: right;">130.000</td>
+<td style="text-align: right;">31,71%</td>
+<td>Suposição de fuso <code>America/Sao_Paulo</code> para datas sem
+offset</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-10</strong></td>
+<td>Quarentena isolada de 20.577 itens órfãos sem pedido</td>
+<td style="text-align: right;">20.577</td>
+<td style="text-align: right;">1,48%</td>
+<td>Itens fora do fato de vendas; faturamento de R$ 2,79 mi não
+atribuível</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-11</strong></td>
+<td>Grão atômico estrito e prevenção de multiplicação em fatos</td>
+<td style="text-align: right;">2.036.876</td>
+<td style="text-align: right;">100,00%</td>
+<td>Campos originais brutos exigem consulta a tabelas de auditoria</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-12</strong></td>
+<td>Integridade estrita pedido <span class="math inline">→</span>
+cliente com bloqueio de carga</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0,00%</td>
+<td>Sacrifica disponibilidade da carga se surgir cliente não
+mapeado</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-13</strong></td>
+<td>Associação de arquivos restrita a vínculos cronológicos válidos</td>
+<td style="text-align: right;">255.000</td>
+<td style="text-align: right;">100,00%</td>
+<td>Autoria de SAC e avaliações não comprovadas; forte redução na
+ABT</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-14</strong></td>
+<td>Desenho da ABT correta com congelamento em 30/06/2025</td>
+<td style="text-align: right;">110.195</td>
+<td style="text-align: right;">100,00%</td>
+<td>Desconsidera histórico posterior a <span
+class="math inline"><em>t</em><sub>0</sub></span> nas variáveis
+preditivas</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-15</strong></td>
+<td>Vazamento temporal e metodológico introduzido na ABT teste</td>
+<td style="text-align: right;">110.195</td>
+<td style="text-align: right;">100,00%</td>
+<td>Modelo torna-se cientificamente inválido para predição real</td>
+</tr>
+<tr class="even">
+<td><strong>RDT-16</strong></td>
+<td>Deduplicação exata de protocolos repetidos do SAC</td>
+<td style="text-align: right;">1.140</td>
+<td style="text-align: right;">1,19%</td>
+<td>Descarta protocolos duplicados de mesma data e texto idênticos</td>
+</tr>
+<tr class="odd">
+<td><strong>RDT-17</strong></td>
+<td>Preservação de preços suspeitos com flag de magnitude</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">0,15%</td>
+<td>Preços 10× anômalos mantidos para fidelidade contábil</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="reflexão-final">Reflexão Final</h2>
+<h3
+id="qual-das-decisões-acima-mudaria-mais-o-resultado-do-modelo-se-tivesse-sido-tomada-de-outro-modo-vocês-testaram-ou-é-uma-hipótese">1.
+Qual das decisões acima mudaria mais o resultado do modelo se tivesse
+sido tomada de outro modo? Vocês testaram, ou é uma hipótese?</h3>
+<p>A decisão que mais afeta o modelo é a <strong>RDT-14 (Corte Temporal
+Estrito)</strong> em contraste com a <strong>RDT-15 (Vazamento
+Temporal)</strong>. Isso não é uma hipótese: foi comprovado
+experimentalmente. Ao omitirmos a fronteira em 30/06/2025, a AUC-ROC da
+Árvore de Decisão salta de 0,5267 para 0,9663 e a do Naive Bayes de
+0,5359 para 0,8883, criando uma ilusão de precisão provocada por
+recências negativas geradas após o corte.</p>
+<p>No plano do negócio legítimo, a que mais alteraria o resultado é a
+<strong>RDT-04 (Conformação de Status no Alvo)</strong>. Ao convergir
+<code>payment_declined</code> para <code>CANCELADO</code> e excluí-los
+da recompra positiva, a taxa do alvo fixou-se em 21,83%. Se tratássemos
+recusas de pagamento como intenção válida de compra, os positivos
+subiriam para ~26,8%, alterando sensivelmente a calibração de
+probabilidades e a matriz de confusão. Testamos essa sensibilidade na
+Semana 3 e confirmamos que a regra do alvo é a alavanca mais influente
+sobre o classificador.</p>
+<h3
+id="alguma-decisão-que-vocês-tomaram-por-conveniência-técnica-teria-consequência-sobre-pessoas-reais-se-este-fosse-um-sistema-em-produção-qual">2.
+Alguma decisão que vocês tomaram por conveniência técnica teria
+consequência sobre pessoas reais, se este fosse um sistema em produção?
+Qual?</h3>
+<p>Sim. A decisão na <strong>RDT-02</strong> de unificar clientes
+prioritariamente pelo CPF — mesmo preservando dígitos inválidos — deixa
+de fora cerca de 15% dos clientes sobrepostos entre o Legado e o
+E-commerce que tinham CPF ausente em uma das pontas.</p>
+<p>Em produção, para dimensionar retenção e conceder benefícios a
+clientes com risco de churn, essa escolha técnica fragmenta o indivíduo
+em duas contas distintas no Data Warehouse. Um cliente fiel que compra
+nas lojas físicas e no site tem seu histórico dividido pela metade:
+frequência e valor monetário são subestimados, classificando-o
+erroneamente como cliente de baixo valor ou em abandono (<em>falso
+churn</em>). Ele deixaria de receber ofertas exclusivas e programas VIP
+aos quais teria direito pelo volume consolidado. Escolhas técnicas de
+ETL nunca são neutras: elas distribuem diretamente incentivos e
+tratamentos a pessoas reais.</p>
+</body>
+</html>

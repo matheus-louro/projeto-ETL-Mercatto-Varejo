@@ -16,13 +16,14 @@ registros nas fontes, incluindo as categorias do e-commerce.
 | Extração | `01_extracao.py` | Cópias integrais e tipadas em `stg` |
 | Conformação | `02_transformacao.py` | Identidades, medidas, mapas e indicadores em `cfm` |
 | Carga | `03_carga_dw.py` | Dimensões, quatro fatos, quarentena e auditoria |
-| ABT correta | `04_abt.py --correta` | Uma linha por cliente na data de corte |
-| Exportação | `05_exportar_orange.py` | CSV das ABTs disponíveis no formato do Orange |
-
-O modo experimental `04_abt.py --vazamento` não está implementado nesta versão.
+| ABT correta | `04_abt.py --correta` | Uma linha por cliente na data de corte (30/06/2025) |
+| ABT vazamento | `04_abt.py --vazamento` | ABT com vazamento temporal em recência/frequência e normalização z-score |
+| Exportação | `05_exportar_orange.py` | CSVs de ambas as ABTs no formato nativo do Orange |
 
 ## Documentação
 
+- [RDT Final Integral (Fichas 01 a 17)](../Relatorio_Decisoes_RDT_Final.md): RDT completo, tabela-resumo e reflexão final.
+- [Relatório do Experimento de Vazamento](../Relatorio_Experimento_Vazamento.md): análise das perguntas (a), (b) e (c) com métricas comparativas.
 - [RDT da Semana 2](../Relatorio_Decisoes_RDT_Semana2.md): decisões de extração e conformação.
 - [RDT da Semana 3](../Relatorio_Decisoes_RDT_Semana3.md): fichas 10–13, reconciliação e desenho da ABT.
 - [Execução e conferência das etapas 1 e 2](docs/SEMANA2_EXECUCAO.md).
@@ -69,6 +70,7 @@ docker compose exec -T etl python 01_extracao.py
 docker compose exec -T etl python 02_transformacao.py
 docker compose exec -T etl python 03_carga_dw.py
 docker compose exec -T etl python 04_abt.py --correta
+docker compose exec -T etl python 04_abt.py --vazamento
 ```
 
 O perfilamento e a exportação são executados pelos comandos:
