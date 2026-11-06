@@ -431,23 +431,35 @@ dos itens efetivamente carregados.
 
 ---
 
-## RDT-14 — Desenho dos atributos da ABT e garantia de corte temporal (sem vazamento)
+## RDT-14 — Desenho dos atributos da ABT e corte temporal
 
 **Etapa:** `04_abt.py --correta`.
 
-**O que o dado mostrava:** 110.195 clientes elegíveis (com ao menos um pedido registrado até 30/06/2025). As transações cobrem de 2023 até novembro de 2025. Calcular métricas agregadas sem congelamento estrito de tempo em 30/06/2025 permitiria que transações ocorridas durante a janela do alvo (01/07 a 28/09/2025) contaminassem os atributos preditores de comportamento prévio.
+**Evidência.** A população contém 110.195 clientes com ao menos um pedido registrado até 30/06/2025. Os 410.000 pedidos do DW abrangem 01/01/2023 a 30/12/2025; 68.406 (16,68%) são posteriores ao corte. Agregá-los sem filtro incorporaria informação futura aos preditores. O alvo possui 24.056 positivos (21,83%) entre os clientes elegíveis.
 
-**Alternativas consideradas:**
-1. Utilizar toda a base disponível e definir atributos em relação à data corrente da execução: simples e comum em análises ad-hoc, mas causa vazamento temporal catastrófico (o modelo decora o futuro).
-2. Congelar estritamente os fatos em `data_pedido_sk <= '2025-06-30'` e definir o alvo na janela `2025-07-01` a `2025-09-28`: garante que os 9 preditores comportamentais reflitam exclusivamente o estado de conhecimento disponível na data de corte.
+**Alternativas.** (1) Agregar todo o histórico disponível: descreve a fotografia atual, mas é incompatível com uma previsão feita no corte histórico. (2) Restringir os eventos dos preditores ao corte e reservar a janela seguinte para o alvo: adotada. (3) Usar apenas clientes com cadastro completo: simplifica o tratamento de ausências, mas reduz a população sem resolver o vazamento temporal.
 
-**Decisão e justificativa:** Alternativa 2. A ABT correta congela as variáveis preditoras em $t_0 = \text{30/06/2025}$. `recencia_dias` mede $t_0 - \max(t_{\text{compra}})$; `frequencia_pedidos`, `valor_monetario_total` e `ticket_medio` agregam exclusivamente pedidos registrados até $t_0$. Atendimentos e avaliações só entram se a abertura ocorreu entre o pedido e a data de corte. O status dos pedidos não foi filtrado para os preditores porque a origem não preserva o log temporal de mudanças de estado (evitando vazamento de status).
+**Decisão e justificativa.** A ABT tem uma linha por cliente em 30/06/2025. O alvo é 1 quando existe pedido não cancelado entre 01/07/2025 e 28/09/2025; caso contrário, 0. Recusa de pagamento permanece em CANCELADO. Os nove preditores são:
 
-**O que se perde:** Perde-se a informação transacional recente para efeitos de descrição histórica do cliente; descarta-se avaliações e chamados posteriores a $t_0$. Os dados permanecem preservados no DW; a restrição é estritamente de corte analítico.
+| Atributo | Regra |
+|---|---|
+| `recencia_dias` | Dias entre o corte e o último pedido registrado até o corte |
+| `frequencia_pedidos` | Quantidade de pedidos registrados até o corte |
+| `valor_monetario_total` | Soma dos valores desses pedidos, com frete |
+| `ticket_medio` | Média dos valores desses pedidos |
+| `tempo_como_cliente` | Dias entre o primeiro pedido registrado e o corte |
+| `qtd_atendimentos_sac` | Contatos com abertura entre a data do pedido e o corte |
+| `qtd_avaliacoes_consistentes` | Avaliações com produto presente no pedido e submissão entre pedido e corte |
+| `nota_media_avaliacoes` | Média das notas disponíveis das avaliações elegíveis |
+| `sem_nota_avaliacao` | Indicador de média de avaliação desconhecida |
 
-**Registros afetados:** 110.195 clientes populam a ABT; 24.056 clientes (21,83%) sinalizados como positivos no alvo. 68.406 pedidos posteriores a 30/06/2025 foram excluídos do cálculo das variáveis preditivas.
+As medidas de pedidos incluem cancelados e descrevem pedidos registrados, sem usar o status atual como preditor: a fonte não conserva seu histórico de alterações. Cada fonte é agregada por cliente antes das junções. Contagens ausentes recebem zero; média desconhecida permanece NULL com indicador. As datas seguem o dia de negócio da RDT-09. O contrato de tipos, PK, FK e domínio do alvo é preservado.
 
-**Asserções associadas:** `populacao elegivel completa`, `ABT grao cliente e corte`, `ABT corte e alvo binario`, `taxa do alvo`, `atributos pedidos recalculados ate corte`, `ABT contagens e recencias validas` (recência $\ge 0$). Teste transacional de mutação do futuro com hash invariante.
+**O que se perde.** Eventos posteriores ao corte ficam fora dos preditores, mas permanecem no DW. Os filtros de coerência reduzem o aproveitamento dos arquivos: 33.015 atendimentos e 26 avaliações participam dos atributos. Há 110.170 clientes sem média de nota (99,98% da ABT). A ausência de histórico de alterações nas fontes impede comprovar retrospectivamente a disponibilidade de todos os valores e pareamentos; o filtro controla as datas dos eventos, sem eliminar essa limitação.
+
+**Registros afetados.** 110.195/110.195 clientes elegíveis (100%). Os 68.406 pedidos posteriores ao corte ficam excluídos dos preditores; 24.056/110.195 clientes têm alvo 1 (21,83%).
+
+**Asserções associadas.** `populacao elegivel completa`, `ABT grao cliente e corte`, `ABT corte e alvo binario`, `alvo confere com janela e status`, `atributos pedidos recalculados ate corte`, `atributos SAC recalculados ate corte`, `avaliacoes validas recalculadas ate corte` e `atributos invariantes a alteracoes no futuro`. O teste transacional altera eventos futuros e verifica que o hash dos preditores de todos os clientes permanece igual.
 
 ---
 
@@ -455,19 +467,17 @@ dos itens efetivamente carregados.
 
 **Etapa:** `04_abt.py --vazamento`.
 
-**O que o dado mostrava:** Na versão correta, a capacidade preditiva legítima das variáveis RFM é modesta (AUC $\approx 0,53$), pois o comportamento de recompra é ruidoso e a janela alvo tem 21,8% de positivos. Para conduzir o experimento pedagógico exigido pela disciplina, era necessário produzir e mensurar o efeito de vazamento temporal grosseiro e vazamento metodológico sutil.
+**Evidência.** O experimento registrado compara as mesmas 110.195 identidades e o mesmo alvo. Na versão correta, as AUCs dos três modelos ficam entre 0,5267 e 0,5359. A versão contaminada contém 47.984 clientes com recência negativa e a mesma quantidade com frequência maior que na ABT correta, evidenciando o uso de pedidos posteriores ao corte.
 
-**Alternativas consideradas:**
-1. Introduzir a própria variável alvo como preditora com ruído aleatório: artificial, não reproduz os erros metodológicos da engenharia de dados.
-2. Omitir a cláusula de corte temporal nos atributos de pedidos (`recencia_dias` e `frequencia_pedidos`) e normalizar globalmente `valor_monetario_total` via Z-score antes da partição treino/teste: reproduz os dois erros mais frequentes em pipelines de mineração em produção.
+**Alternativas.** (1) Inserir o próprio alvo como preditor: demonstra contaminação direta, mas não reproduz os erros de preparação especificados no projeto. (2) Retirar o filtro temporal de recência e frequência e normalizar globalmente uma variável antes da partição: adotada para representar vazamento temporal e de pré-processamento. (3) Manter somente a versão correta: preserva a validade analítica, mas não permite medir o contraexemplo exigido.
 
-**Decisão e justificativa:** Alternativa 2. Criou-se a tabela `abt.recompra_90d_vazamento` mantendo os mesmos 110.195 clientes e o mesmo alvo. Para `recencia_dias` e `frequencia_pedidos`, utilizou-se `dw.fato_pedido` sem restrição temporal, permitindo que compras da janela do alvo influenciem o cálculo. Para `valor_monetario_total`, calculou-se o Z-score univariado ($\mu=0, \sigma=1$) sobre todos os clientes antes do particionamento.
+**Decisão e justificativa.** `abt.recompra_90d_vazamento` mantém a população e o alvo da ABT correta. Recência e frequência usam todos os pedidos, inclusive posteriores ao corte. `valor_monetario_total` é substituído por `(valor - media_global) / desvio_global`, calculado sobre os clientes elegíveis antes da partição de treino e teste. A soma monetária usada nessa normalização respeita o corte; o erro sutil consiste no acesso às estatísticas dos clientes de teste. Os demais preditores conservam as regras da versão correta. A versão é um controle experimental, sem validade para representar uma previsão feita em 30/06/2025.
 
-**O que se perde:** Perde-se a validade científica do modelo preditivo para uso em produção (o modelo torna-se inútil na prática, funcionando apenas em laboratório). Preserva-se o valor didático do contraexemplo mensurado.
+**O que se perde.** A avaliação contaminada deixa de estimar o desempenho de uma previsão com informações disponíveis no corte. O nome `valor_monetario_total` conserva-se para comparar os mesmos campos entre versões, mas nessa tabela representa um Z-score, não reais. A interpretação monetária exige consultar a ABT correta. Ausência de grande efeito numérico da normalização não torna o procedimento válido.
 
-**Registros afetados:** 110.195 registros afetados na ABT; 47.984 clientes (43,5% da base) tiveram recência calculada como negativa ($< 0$ dias) e frequência inflada por compras futuras. 100% dos clientes tiveram `valor_monetario_total` normalizado com parâmetros globais.
+**Registros afetados.** 110.195/110.195 clientes (100%) recebem a transformação global. Em 47.984/110.195 (43,54%), a recência fica negativa e a frequência é inflada por pedidos futuros. A população e os 24.056 positivos são preservados.
 
-**Asserções associadas:** `populacao elegivel completa vazamento`, `taxa do alvo vazamento`, `vazamento temporal recencias negativas detectadas` ($\ge 1$), `vazamento temporal frequencias infladas` ($\ge 1$), `vazamento sutil media zscore global` (entre $-0,01$ e $+0,01$), `vazamento sutil desvio zscore global` (entre $0,99$ e $1,01$).
+**Asserções associadas.** `populacao elegivel completa vazamento`, `ABT vazamento grao cliente e corte`, `ABT vazamento corte e alvo binario`, `taxa do alvo vazamento`, `vazamento temporal recencias negativas detectadas`, `vazamento temporal frequencias infladas`, `vazamento sutil media zscore global` e `vazamento sutil desvio zscore global`. As duas últimas verificam média próxima de zero e desvio próximo de um na coluna transformada.
 
 ---
 
@@ -491,43 +501,60 @@ dos itens efetivamente carregados.
 
 ## RDT-17 — Preços de referência com magnitude suspeita
 
----
+**Etapa:** `transformacoes_semana2.conforma_categorias`.
 
-## Tabela-Resumo de Todas as Decisões de Transformação
+**Evidência.** A regra de triagem `preco_referencia > 10 × mediana positiva da origem e categoria_nivel1` sinaliza 8/15.000 produtos (0,05%). Isso não representa todos os erros possíveis nem comprova que esses preços estejam incorretos.
 
-| Ficha | Decisão Central | Registros Afetados | % da Base | Informação Perdida / Limitação Assumida |
-|---|---|---:|---:|---|
-| **RDT-01** | Carga completa em lotes de 10.000 para camada `stg` | 2.205.864 | 100,00% | Não mantém histórico de snapshots anteriores em staging |
-| **RDT-02** | Unificação de clientes por CPF preservando DV inválido | 118.215 | 89,42% | ~15% de clientes sobrepostos sem CPF comum não são unidos |
-| **RDT-03** | Resolução determinística de duplicatas internas do legado | 1.984 | 4,20% | Prioriza cadastro mais antigo; campos conflitantes descartados |
-| **RDT-04** | Conformação de status (`payment_declined` $\to$ `CANCELADO`) | 13.990 | 3,41% | Perde distinção entre cancelamento voluntário e recusa bancária |
-| **RDT-05** | Harmonização monetária (adiciona frete ao e-commerce) | 280.000 | 68,29% | Altera conceito de `total_amount` original para faturamento com frete |
-| **RDT-06** | Sentinela `-1` em desconto vira zero; preserva frete negativo | 4.056 | 0,29% | Desconto real omitido na origem é irrecuperável |
-| **RDT-07** | Mapeamento da taxonomia de categorias em árvore | 3.000 | 100,00% | Rótulos genéricos (`DIVERSOS`, `OUTROS`) classificados como indefinidos |
-| **RDT-08** | Tratamento de ausências com sentinela `1900-01-01` $\to$ `NULL` + flag | 1.025 | 0,79% | Data real de entrega de pedidos sentinela é irrecuperável |
-| **RDT-09** | Padronização temporal em UTC e dia de negócio local | 130.000 | 31,71% | Suposição de fuso `America/Sao_Paulo` para datas sem offset |
-| **RDT-10** | Quarentena isolada de 20.577 itens órfãos sem pedido | 20.577 | 1,48% | Itens fora do fato de vendas; faturamento de R$ 2,79 mi não atribuível |
-| **RDT-11** | Grão atômico estrito e prevenção de multiplicação em fatos | 2.036.876 | 100,00% | Campos originais brutos exigem consulta a tabelas de auditoria |
-| **RDT-12** | Integridade estrita pedido $\to$ cliente com bloqueio de carga | 0 | 0,00% | Sacrifica disponibilidade da carga se surgir cliente não mapeado |
-| **RDT-13** | Associação de arquivos restrita a vínculos cronológicos válidos | 255.000 | 100,00% | Autoria de SAC e avaliações não comprovadas; forte redução na ABT |
-| **RDT-14** | Desenho da ABT correta com congelamento em 30/06/2025 | 110.195 | 100,00% | Desconsidera histórico posterior a $t_0$ nas variáveis preditivas |
-| **RDT-15** | Vazamento temporal e metodológico introduzido na ABT teste | 110.195 | 100,00% | Modelo torna-se cientificamente inválido para predição real |
-| **RDT-16** | Deduplicação exata de protocolos repetidos do SAC | 1.140 | 1,19% | Descarta protocolos duplicados de mesma data e texto idênticos |
-| **RDT-17** | Preservação de preços suspeitos com flag de magnitude | 18 | 0,15% | Preços 10× anômalos mantidos para fidelidade contábil |
+**Alternativas.** (1) Dividir preços extremos por dez: pode corrigir digitação, mas também alterar produtos caros legítimos. (2) Excluir produtos/itens: perde transações e pode romper reconciliação. (3) Preservar preços e vendas, sinalizando suspeita e mediana de referência: adotada por falta de confirmação externa do erro.
 
+**Decisão e justificativa.** `cfm.produtos_auditoria` guarda mediana e `preco_suspeito`; nenhum preço de catálogo nem de venda é substituído. A regra é heurística de investigação, não validação automática.
+
+**O que se perde.** Possíveis erros permanecem nas medidas observadas. Evita-se inventar valores corretos, mas é necessária análise de sensibilidade futura antes de usar extremos em modelos.
+
+**Registros afetados.** 15.000 produtos examinados (100%); oito sinalizados (0,05%); zero preços alterados.
+
+**Asserção associada.** `preco referencia preservado inclusive suspeitos`.
 
 ---
 
-## Reflexão Final
+## Tabela-resumo das decisões de transformação
 
-### 1. Qual das decisões acima mudaria mais o resultado do modelo se tivesse sido tomada de outro modo? Vocês testaram, ou é uma hipótese?
+Os percentuais usam o denominador indicado em cada linha. Populações de clientes, produtos, pedidos e itens não são intercambiáveis. As fichas detalham os subconjuntos que se sobrepõem.
 
-A decisão que mais afeta o modelo é a **RDT-14 (Corte Temporal Estrito)** em contraste com a **RDT-15 (Vazamento Temporal)**. Isso não é uma hipótese: foi comprovado experimentalmente. Ao omitirmos a fronteira em 30/06/2025, a AUC-ROC da Árvore de Decisão salta de 0,5267 para 0,9663 e a do Naive Bayes de 0,5359 para 0,8883, criando uma ilusão de precisão provocada por recências negativas geradas após o corte.
+| Ficha | Decisão | População e percentual | Perda ou limitação |
+|---|---|---|---|
+| RDT-01 | Carga completa fiel em lotes | 2.205.864 registros (100% das fontes) | Sem histórico de fotografias anteriores em staging |
+| RDT-02 | Identidade por CPF exato normalizado | 132.250 cadastros processados (100%); 118.215 identidades resultantes | Fragmentação sem CPF comum e risco de colisão; sobreposição real não quantificável |
+| RDT-03 | Deduplicação com mapa de todos os IDs | Legado: 1.427/47.250 (3,02%); digital: 3/85.000 (0,0035%) | Atributos secundários fora da dimensão; aliases e originais preservados |
+| RDT-04 | Macrostatus e motivo secundário | 410.000 pedidos (100%); 52.177 cancelados/recusados (12,73%) | Motivo desconhecido no legado; distinção digital preservada |
+| RDT-05 | Mercadoria bruta, desconto, frete e total conformados | 410.000 pedidos (100%); total digital com frete em 280.000 | Leitura do total exige definição comum; valor de origem preservado |
+| RDT-06 | Desconto sentinela e preservação do frete | 4.056/397.086 itens legados (1,02%); frete negativo em 1.174/410.000 pedidos (0,29%) | Desconto real e causa do frete negativo desconhecidos |
+| RDT-07 | Categorias e atividade conformadas | 15.000 produtos (100%); híbridos: 223/3.000 legados (7,43%) | Perda de especificidade dos rótulos híbridos e genéricos |
+| RDT-08 | Ausências e inválidos por campo | Denominadores na ficha; entrega sentinela: 1.025/130.000 (0,79%) | Valores reais não recuperáveis; causas distinguíveis preservadas por indicadores |
+| RDT-09 | Instantes com fuso e dia de negócio local | 410.000 pedidos e 160.000 avaliações (100% de cada base) | Fuso assumido em 130.000 pedidos legados e 31.915 avaliações sem offset |
+| RDT-10 | Quarentena de itens sem pedido | 20.577/1.392.453 itens (1,48%) | Órfãos fora das análises usuais; vínculo não recuperável |
+| RDT-11 | Grãos separados com rastreabilidade | 410.000 pedidos, 1.371.876 itens, 95.000 atendimentos e 160.000 avaliações (100% de cada fato) | Campos brutos exigem consulta à auditoria ou origem |
+| RDT-12 | Bloqueio de carga se faltar cliente | 0/410.000 pedidos sem cliente (0%); todos verificados | Nova carga bloqueada até investigação de eventual órfão |
+| RDT-13 | Preservação dos arquivos e uso analítico restrito | 255.000 ocorrências preservadas (100%); pares inconsistentes em 159.920/160.000 avaliações (99,95%) | Autoria e compra não comprovadas; restrições adicionais na ABT |
+| RDT-14 | ABT correta com corte em 30/06/2025 | 110.195 clientes elegíveis (100%); 24.056 positivos (21,83%) | Eventos posteriores excluídos dos preditores; histórico de alterações indisponível |
+| RDT-15 | Vazamento temporal e Z-score global | 110.195 clientes (100%); recência negativa e frequência inflada em 47.984 (43,54%) | Métricas contaminadas não representam previsão válida no corte |
+| RDT-16 | Remoção apenas das cópias exatas do SAC | 1.140/96.140 linhas excedentes (1,19%); 95.000 protocolos resultantes | Multiplicidade removida da visão conformada; bruto preservado |
+| RDT-17 | Sinalização de preços suspeitos sem correção | 15.000 produtos examinados (100%); 8/15.000 sinalizados (0,05%) | Heurística não comprova erro; preços originais preservados |
 
-No plano do negócio legítimo, a que mais alteraria o resultado é a **RDT-04 (Conformação de Status no Alvo)**. Ao convergir `payment_declined` para `CANCELADO` e excluí-los da recompra positiva, a taxa do alvo fixou-se em 21,83%. Se tratássemos recusas de pagamento como intenção válida de compra, os positivos subiriam para ~26,8%, alterando sensivelmente a calibração de probabilidades e a matriz de confusão. Testamos essa sensibilidade na Semana 3 e confirmamos que a regra do alvo é a alavanca mais influente sobre o classificador.
+---
 
-### 2. Alguma decisão que vocês tomaram por conveniência técnica teria consequência sobre pessoas reais, se este fosse um sistema em produção? Qual?
+## Reflexão final
 
-Sim. A decisão na **RDT-02** de unificar clientes prioritariamente pelo CPF — mesmo preservando dígitos inválidos — deixa de fora cerca de 15% dos clientes sobrepostos entre o Legado e o E-commerce que tinham CPF ausente em uma das pontas.
+### 1. Decisão de maior impacto e evidência experimental
 
-Em produção, para dimensionar retenção e conceder benefícios a clientes com risco de churn, essa escolha técnica fragmenta o indivíduo em duas contas distintas no Data Warehouse. Um cliente fiel que compra nas lojas físicas e no site tem seu histórico dividido pela metade: frequência e valor monetário são subestimados, classificando-o erroneamente como cliente de baixo valor ou em abandono (*falso churn*). Ele deixaria de receber ofertas exclusivas e programas VIP aos quais teria direito pelo volume consolidado. Escolhas técnicas de ETL nunca são neutras: elas distribuem diretamente incentivos e tratamentos a pessoas reais.
+A comparação entre RDT-14 e RDT-15 mostra o impacto da preparação temporal: a AUC da Árvore passa de 0,5267 na base correta para 0,9663 na versão com vazamento temporal e normalização global. No Naive Bayes, passa de 0,5359 para 0,8883. São resultados medidos do experimento completo. O ensaio isolado da normalização apresentou variação pequena; os resultados não autorizam atribuir todo o ganho a ela.
+
+Entre as regras de negócio, a definição de recompra na RDT-04 pode alterar o alvo. Recusas de pagamento são excluídas dos positivos. Não há medição registrada que sustente uma taxa alternativa de recompra nem uma comparação entre modelos sob essa mudança; seu impacto permanece uma hipótese.
+
+### 2. Consequências possíveis sobre pessoas
+
+O pareamento por CPF da RDT-02 pode fragmentar uma pessoa sem CPF comum entre sistemas ou unir pessoas por identificador incorreto. Em uma aplicação real, isso poderia subestimar ou combinar históricos e afetar a seleção para campanhas de retenção. São riscos possíveis, não danos observados neste laboratório. As fontes permitem medir 12.605 CPFs compartilhados, mas não determinar quantas pessoas reais permaneceram fragmentadas. Por isso, não atribuímos um percentual à sobreposição não recuperada.
+
+### 3. Informação ausente que seria necessária
+
+Seriam úteis um identificador de pessoa validado entre os sistemas, o histórico de alterações de cadastro e status, a confirmação dos fusos sem offset e a explicação dos descontos sentinela e fretes negativos. Também faltam vínculos confiáveis entre avaliações, produtos e pedidos. Essas informações permitiriam validar os pareamentos, reconstruir o estado conhecido no corte e distinguir desconhecimento de evento não ocorrido. Preservar originais e indicadores mantém a possibilidade de investigação, mas não recupera informação que a fonte não fornece.

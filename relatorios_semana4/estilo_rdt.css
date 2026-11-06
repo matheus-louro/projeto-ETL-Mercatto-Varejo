@@ -1,0 +1,40 @@
+@import url("estilo_relatorio.css");
+
+@page {
+    size: A4 portrait;
+    margin: 16mm 15mm 17mm;
+    @bottom-left {
+        content: "IFMT · Mineração de Dados 2026/2 · Mercatto Varejo · Registro de Decisões";
+        font-family: Arial, sans-serif;
+        font-size: 7pt;
+        color: #555;
+    }
+    @bottom-right {
+        content: counter(page) " / " counter(pages);
+        font-family: Arial, sans-serif;
+        font-size: 7pt;
+        color: #555;
+    }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+h1 { font-size: 16pt; margin-bottom: 10pt; }
+h2 { font-size: 12pt; margin-top: 12pt; margin-bottom: 6pt; }
+h3 { font-size: 10.5pt; margin-top: 9pt; margin-bottom: 5pt; }
+p { margin-bottom: 6pt; }
+ul, ol { margin-top: 4pt; margin-bottom: 6pt; padding-left: 18pt; }
+code { font-family: Consolas, monospace; font-size: 8.5pt; overflow-wrap: anywhere; }
+table { font-size: 8.5pt; line-height: 1.25; margin: 8pt 0; break-inside: auto; }
+th, td { padding: 4pt; overflow-wrap: anywhere; vertical-align: top; }
+thead { display: table-header-group; }
+tr { break-inside: avoid; }
+h1, h2, h3 { break-after: avoid; }
+h2[id^="rdt-"] + p { break-after: avoid; }
+hr { margin: 8pt 0; }
+header#title-block-header { display: none; }
